@@ -3,6 +3,7 @@
 // state and is honest about it in the UI.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+<<<<<<< HEAD
 import type { ClientEventKind, ClientNote } from "./crm-data";
 import { invoiceBalance } from "./invoices";
 import type { Lead, LeadStage } from "./leads-data";
@@ -15,6 +16,11 @@ import {
   migrateState,
   money,
   nowStamp,
+=======
+import {
+  PHOTOS,
+  STATE_VERSION,
+>>>>>>> origin/main
   seedState,
   type Client,
   type DemoState,
@@ -23,7 +29,10 @@ import {
   type Product,
   type Profile,
   type Session,
+<<<<<<< HEAD
   type SessionChange,
+=======
+>>>>>>> origin/main
   type TeamMember,
 } from "./demo-data";
 
@@ -33,12 +42,19 @@ function loadState(): DemoState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
+<<<<<<< HEAD
     return migrateState(JSON.parse(raw));
+=======
+    const parsed = JSON.parse(raw) as DemoState;
+    if (parsed.version !== STATE_VERSION || !Array.isArray(parsed.galleries)) return null;
+    return parsed;
+>>>>>>> origin/main
   } catch {
     return null;
   }
 }
 
+<<<<<<< HEAD
 export type SessionSlot = Pick<Session, "date" | "start" | "end">;
 export type SessionEdit = Partial<
   Pick<Session, "title" | "clientId" | "kind" | "location" | "notes" | "date" | "start" | "end">
@@ -111,12 +127,20 @@ export interface DemoStore {
   state: DemoState;
   /** False until saved demo state has been read from localStorage. */
   ready: boolean;
+=======
+const uid = (prefix: string) =>
+  `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+export interface DemoStore {
+  state: DemoState;
+>>>>>>> origin/main
   resetDemo: () => void;
   updateProfile: (patch: Partial<Profile>) => void;
   createGallery: (title: string) => Gallery;
   updateGallery: (id: string, patch: Partial<Gallery>) => void;
   addPhotos: (id: string, count: number) => void;
   toggleFavorite: (galleryId: string, photoId: string) => void;
+<<<<<<< HEAD
   addClient: (input: NewClientInput) => Client;
   toggleClientStar: (id: string) => void;
   updateClient: (id: string, patch: NewClientInput) => void;
@@ -144,6 +168,12 @@ export interface DemoStore {
   updateSessionStatus: (id: string, status: "pending" | "confirmed" | "completed") => void;
   cancelSession: (id: string, reason: string, notifyClient: boolean) => void;
   reinstateSession: (id: string) => void;
+=======
+  addClient: (input: { name: string; email: string }) => void;
+  toggleClientStar: (id: string) => void;
+  addSession: (input: Omit<Session, "id" | "color" | "status">) => void;
+  updateSessionStatus: (id: string, status: Session["status"]) => void;
+>>>>>>> origin/main
   addProduct: (input: Pick<Product, "name" | "category" | "price">) => void;
   toggleProduct: (id: string) => void;
   updateOrderStatus: (id: string, status: Order["status"]) => void;
@@ -190,7 +220,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
     return {
       state,
+<<<<<<< HEAD
       ready,
+=======
+>>>>>>> origin/main
       resetDemo: () => setState(seedState()),
       updateProfile: (patch) => setState((s) => ({ ...s, profile: { ...s.profile, ...patch } })),
       createGallery: (title) => {
@@ -235,6 +268,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             ? g.favorites.filter((p) => p !== photoId)
             : [...g.favorites, photoId],
         })),
+<<<<<<< HEAD
       addClient: (input) => {
         const client: Client = {
           ...input,
@@ -553,6 +587,33 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             "Back on the calendar as pending",
           ),
         ),
+=======
+      addClient: ({ name, email }) =>
+        setState((s) => ({
+          ...s,
+          clients: [
+            {
+              id: uid("c"),
+              name,
+              email,
+              avatar: PHOTOS.avatars.olivia,
+              sessions: 0,
+              starred: false,
+            } satisfies Client,
+            ...s.clients,
+          ],
+        })),
+      toggleClientStar: (id) => patchList("clients", id, (c) => ({ starred: !c.starred })),
+      addSession: (input) =>
+        setState((s) => ({
+          ...s,
+          sessions: [...s.sessions, { ...input, id: uid("s"), status: "pending", color: "violet" }],
+          clients: s.clients.map((c) =>
+            c.id === input.clientId ? { ...c, sessions: c.sessions + 1 } : c,
+          ),
+        })),
+      updateSessionStatus: (id, status) => patchList("sessions", id, () => ({ status })),
+>>>>>>> origin/main
       addProduct: (input) =>
         setState((s) => ({
           ...s,
@@ -575,7 +636,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         patchList("integrations", id, (i) => ({ connected: !i.connected })),
       publishTemplate: (id) => setState((s) => ({ ...s, publishedTemplate: id })),
     };
+<<<<<<< HEAD
   }, [state, ready]);
+=======
+  }, [state]);
+>>>>>>> origin/main
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }

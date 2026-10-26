@@ -2,6 +2,7 @@ import { SubNav } from "@/components/kit";
 
 export function StoreTabs() {
   return (
+<<<<<<< HEAD
     // Scrolls sideways on narrow phones rather than widening the page.
     <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0 [&>div]:shrink-0 [&>div]:whitespace-nowrap">
       <SubNav
@@ -14,5 +15,13 @@ export function StoreTabs() {
         ]}
       />
     </div>
+=======
+    <SubNav
+      items={[
+        { to: "/store", label: "Products", exact: true },
+        { to: "/store/orders", label: "Orders" },
+      ]}
+    />
+>>>>>>> origin/main
   );
 }

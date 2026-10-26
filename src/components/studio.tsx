@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -19,11 +20,21 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+=======
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { Button, SubNav } from "@/components/kit";
+import {
+  Dialog,
+  DialogContent,
+>>>>>>> origin/main
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+<<<<<<< HEAD
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +45,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+=======
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+>>>>>>> origin/main
 import {
   Select,
   SelectContent,
@@ -41,6 +56,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+<<<<<<< HEAD
 import { Textarea } from "@/components/ui/textarea";
 import { useDemo } from "@/lib/store";
 import { formatTime, type Session, type SessionKind } from "@/lib/demo-data";
@@ -53,6 +69,9 @@ import {
   type SessionFormInput,
 } from "@/lib/sessions";
 import { cn } from "@/lib/utils";
+=======
+import { useDemo } from "@/lib/store";
+>>>>>>> origin/main
 
 export function StudioTabs() {
   return (
@@ -65,6 +84,7 @@ export function StudioTabs() {
   );
 }
 
+<<<<<<< HEAD
 /** Colour tokens per session kind, shared by the calendar, lists and details. */
 export const KIND_STYLE: Record<SessionKind, { chip: string; dot: string }> = {
   shoot: { chip: "bg-info/12 border-info/30 text-info", dot: "bg-info" },
@@ -219,10 +239,40 @@ export function SessionFormDialog({
       onSaved?.(created);
     }
     setOpen(false);
+=======
+export function AddSessionDialog({ defaultDate = "2025-04-24" }: { defaultDate?: string }) {
+  const { state: demo, addSession } = useDemo();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    title: "",
+    clientId: "",
+    date: defaultDate,
+    start: "10:00",
+    end: "11:00",
+    location: "Studio",
+  });
+  const set = (patch: Partial<typeof form>) => setForm((f) => ({ ...f, ...patch }));
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.clientId) {
+      toast.error("Choose a client for this session.");
+      return;
+    }
+    if (form.end <= form.start) {
+      toast.error("End time must be after the start time.");
+      return;
+    }
+    addSession(form);
+    toast.success(`${form.title} added as pending`);
+    setOpen(false);
+    set({ title: "", clientId: "" });
+>>>>>>> origin/main
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+<<<<<<< HEAD
       {hideTrigger ? null : (
         <DialogTrigger asChild>
           <Button size="sm">
@@ -291,11 +341,83 @@ export function SessionFormDialog({
           />
           <ConflictWarning conflicts={conflicts} />
           <Field id="ns-loc" label="Location">
+=======
+      <DialogTrigger asChild>
+        <Button size="sm">
+          <Plus /> Add Session
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <form onSubmit={submit} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle className="display-title text-xl">New session</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-1.5">
+            <Label htmlFor="ns-title">Session name</Label>
+            <Input
+              id="ns-title"
+              required
+              value={form.title}
+              onChange={(e) => set({ title: e.target.value })}
+              placeholder="e.g. Engagement Shoot"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Client</Label>
+            <Select value={form.clientId} onValueChange={(clientId) => set({ clientId })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a client" />
+              </SelectTrigger>
+              <SelectContent>
+                {demo.clients.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="ns-date">Date</Label>
+              <Input
+                id="ns-date"
+                type="date"
+                required
+                value={form.date}
+                onChange={(e) => set({ date: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ns-start">Start</Label>
+              <Input
+                id="ns-start"
+                type="time"
+                required
+                value={form.start}
+                onChange={(e) => set({ start: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ns-end">End</Label>
+              <Input
+                id="ns-end"
+                type="time"
+                required
+                value={form.end}
+                onChange={(e) => set({ end: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ns-loc">Location</Label>
+>>>>>>> origin/main
             <Input
               id="ns-loc"
               value={form.location}
               onChange={(e) => set({ location: e.target.value })}
             />
+<<<<<<< HEAD
           </Field>
           <Field id="ns-notes" label="Prep notes" hint="Only your studio sees these.">
             <Textarea
@@ -311,12 +433,18 @@ export function SessionFormDialog({
               Cancel
             </Button>
             <Button type="submit">{session ? "Save changes" : "Add session"}</Button>
+=======
+          </div>
+          <DialogFooter>
+            <Button type="submit">Add session</Button>
+>>>>>>> origin/main
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
+<<<<<<< HEAD
 
 /** Kept for existing callers: the create-only form. */
 export function AddSessionDialog(props: Omit<Parameters<typeof SessionFormDialog>[0], "session">) {
@@ -673,3 +801,5 @@ export function SessionActionsMenu({
     </>
   );
 }
+=======
+>>>>>>> origin/main

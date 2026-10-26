@@ -3,7 +3,10 @@ import {
   Camera,
   Globe,
   Images,
+<<<<<<< HEAD
   Inbox,
+=======
+>>>>>>> origin/main
   LayoutDashboard,
   Puzzle,
   Settings,
@@ -28,7 +31,10 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Galleries", url: "/galleries", icon: Images },
   { title: "Clients", url: "/clients", icon: Users },
+<<<<<<< HEAD
   { title: "Leads", url: "/leads", icon: Inbox },
+=======
+>>>>>>> origin/main
   { title: "Website", url: "/website", icon: Globe },
   { title: "Store", url: "/store", icon: Store },
   { title: "Studio", url: "/studio", icon: Camera },

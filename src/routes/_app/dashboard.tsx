@@ -2,8 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 import { Avatar, Panel, pageHead } from "@/components/kit";
 import { useDemo } from "@/lib/store";
+<<<<<<< HEAD
 import { DEMO_TODAY, avatar, img, moneyShort } from "@/lib/demo-data";
 import { leadTrend } from "@/lib/leads";
+=======
+import { avatar, img, moneyShort } from "@/lib/demo-data";
+>>>>>>> origin/main
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => pageHead("Dashboard", "Here's what's happening with your business today."),
@@ -23,7 +27,10 @@ function Dashboard() {
   const paid = demo.orders.filter((o) => o.status === "paid" || o.status === "shipped");
   const revenue = BASE_REVENUE + paid.reduce((s, o) => s + o.total, 0);
   const upcoming = demo.sessions.filter((s) => s.status === "confirmed").length;
+<<<<<<< HEAD
   const leads = leadTrend(demo.leads, DEMO_TODAY);
+=======
+>>>>>>> origin/main
 
   const stats = [
     {
@@ -50,6 +57,7 @@ function Dashboard() {
     },
     {
       label: "New Leads",
+<<<<<<< HEAD
       value: leads.current,
       sub:
         leads.change === null ? (
@@ -60,6 +68,15 @@ function Dashboard() {
           </>
         ),
       to: "/leads",
+=======
+      value: 8,
+      sub: (
+        <>
+          <Up /> 33%
+        </>
+      ),
+      to: "/clients",
+>>>>>>> origin/main
     },
   ] as const;
 

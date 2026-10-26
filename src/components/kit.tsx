@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+<<<<<<< HEAD
 import { Link, useRouter } from "@tanstack/react-router";
 import { Aperture, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,6 +7,12 @@ import { avatar } from "@/lib/demo-data";
 import { initials } from "@/lib/clients";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+=======
+import { Link } from "@tanstack/react-router";
+import { Aperture, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+>>>>>>> origin/main
 
 /** Standard head() metadata for an app page. */
 export function pageHead(title: string, description: string) {
@@ -63,6 +70,7 @@ export function Panel({ children, className }: { children: ReactNode; className?
   );
 }
 
+<<<<<<< HEAD
 export function EmptyState({
   title,
   description,
@@ -72,13 +80,19 @@ export function EmptyState({
   description?: string;
   action?: ReactNode;
 }) {
+=======
+export function EmptyState({ title, description }: { title: string; description?: string }) {
+>>>>>>> origin/main
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-12 text-center">
       <p className="display-title text-lg text-foreground">{title}</p>
       {description ? (
         <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
       ) : null}
+<<<<<<< HEAD
       {action ? <div className="mt-4">{action}</div> : null}
+=======
+>>>>>>> origin/main
     </div>
   );
 }
@@ -103,6 +117,7 @@ const statusTone: Record<string, keyof typeof tone> = {
   shipped: "info",
   archived: "muted",
   inactive: "muted",
+<<<<<<< HEAD
   past: "muted",
   sent: "info",
   partial: "warning",
@@ -110,6 +125,8 @@ const statusTone: Record<string, keyof typeof tone> = {
   void: "muted",
   completed: "info",
   cancelled: "rose",
+=======
+>>>>>>> origin/main
 };
 
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
@@ -136,6 +153,7 @@ export function DemoNotice({ children }: { children: ReactNode }) {
 }
 
 /** Round avatar from a full image URL. */
+<<<<<<< HEAD
 export function Avatar({
   src,
   alt,
@@ -145,6 +163,9 @@ export function Avatar({
   alt: string;
   className?: string | undefined;
 }) {
+=======
+export function Avatar({ src, alt, className }: { src: string; alt: string; className?: string }) {
+>>>>>>> origin/main
   return (
     <img
       src={src}
@@ -155,6 +176,7 @@ export function Avatar({
   );
 }
 
+<<<<<<< HEAD
 /** A person's photo, or their initials when there is none. */
 export function PersonAvatar({
   name,
@@ -283,6 +305,8 @@ export function Field({
   );
 }
 
+=======
+>>>>>>> origin/main
 /** Segmented links between sibling pages (e.g. Products / Orders). */
 export function SubNav({ items }: { items: { to: string; label: string; exact?: boolean }[] }) {
   return (

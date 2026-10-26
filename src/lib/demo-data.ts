@@ -1,6 +1,7 @@
 // Pixora demo data layer — types, image helpers and seed data.
 // No backend is configured: everything below is local demo state.
 
+<<<<<<< HEAD
 import {
   seedClientEvents,
   seedClientNotes,
@@ -13,6 +14,8 @@ import { seedLeads, type Lead } from "./leads-data";
 import { seedBookingTypes, type BookingType } from "./booking-data";
 import { seedProjects, type Project } from "./projects-data";
 
+=======
+>>>>>>> origin/main
 /** Unsplash image URL, cropped to the requested size. */
 export function img(id: string, w = 800, h?: number): string {
   return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}${h ? `&h=${h}` : ""}&q=75`;
@@ -100,6 +103,7 @@ export interface Gallery {
   password: string;
   allowDownloads: boolean;
   allowFavorites: boolean;
+<<<<<<< HEAD
   /** The client this gallery was delivered to, if linked. */
   clientId?: string | undefined;
 }
@@ -108,10 +112,15 @@ export type ClientType = "wedding" | "portrait" | "family" | "commercial" | "eve
 export type ClientStatus = "active" | "past";
 export type ClientSource = "website" | "referral" | "instagram" | "google" | "repeat";
 
+=======
+}
+
+>>>>>>> origin/main
 export interface Client {
   id: string;
   name: string;
   email: string;
+<<<<<<< HEAD
   /** Unsplash photo id, or "" to show initials. */
   avatar: string;
   sessions: number;
@@ -137,6 +146,14 @@ export interface SessionChange {
   detail: string;
 }
 export type SessionKind = "shoot" | "consultation" | "editing" | "delivery";
+=======
+  avatar: string;
+  sessions: number;
+  starred: boolean;
+}
+
+export type SessionStatus = "confirmed" | "pending";
+>>>>>>> origin/main
 
 export interface Session {
   id: string;
@@ -147,6 +164,7 @@ export interface Session {
   end: string; // HH:mm
   location: string;
   status: SessionStatus;
+<<<<<<< HEAD
   /** What kind of appointment this is; drives calendar colour and filters. */
   kind: SessionKind;
   /** Legacy colour from v4 and earlier; the calendar now styles by `kind`. */
@@ -156,6 +174,10 @@ export interface Session {
   notes?: string | undefined;
   cancelReason?: string | undefined;
   history?: SessionChange[] | undefined;
+=======
+  color: "info" | "violet" | "success";
+  note?: string;
+>>>>>>> origin/main
 }
 
 export interface Product {
@@ -234,12 +256,15 @@ export interface DemoState {
   activity: Activity[];
   templates: WebsiteTemplate[];
   publishedTemplate: string;
+<<<<<<< HEAD
   clientNotes: ClientNote[];
   clientEvents: ClientEvent[];
   invoices: Invoice[];
   leads: Lead[];
   bookingTypes: BookingType[];
   projects: Project[];
+=======
+>>>>>>> origin/main
 }
 
 // ---------- formatting ----------
@@ -272,6 +297,7 @@ export function formatTime(hhmm: string): string {
 
 // ---------- seed ----------
 
+<<<<<<< HEAD
 export const STATE_VERSION = 6;
 
 /** The demo's "today" — seed sessions and activity sit in the week of Apr 20, 2025. */
@@ -335,6 +361,9 @@ export function migrateState(saved: unknown): DemoState | null {
   }
   return merged;
 }
+=======
+export const STATE_VERSION = 2;
+>>>>>>> origin/main
 
 const W = PHOTOS.wedding;
 const A = PHOTOS.avatars;
@@ -353,7 +382,10 @@ export function seedState(): DemoState {
     galleries: [
       {
         id: "sarah-james-wedding",
+<<<<<<< HEAD
         clientId: "c1",
+=======
+>>>>>>> origin/main
         title: "Sarah & James Wedding",
         shortTitle: "Sarah & James",
         description: "A beautiful day filled with love and joy.",
@@ -372,7 +404,10 @@ export function seedState(): DemoState {
       },
       {
         id: "family-portraits",
+<<<<<<< HEAD
         clientId: "c6",
+=======
+>>>>>>> origin/main
         title: "Family Portraits",
         shortTitle: "Family Portraits",
         description: "An autumn afternoon with the Mokoena family.",
@@ -391,7 +426,10 @@ export function seedState(): DemoState {
       },
       {
         id: "product-shoot",
+<<<<<<< HEAD
         clientId: "c4",
+=======
+>>>>>>> origin/main
         title: "Product Shoot",
         shortTitle: "Product Shoot",
         description: "Studio product photography for Amber & Oak skincare.",
@@ -410,7 +448,10 @@ export function seedState(): DemoState {
       },
       {
         id: "travel-collection",
+<<<<<<< HEAD
         clientId: "c2",
+=======
+>>>>>>> origin/main
         title: "Travel Collection",
         shortTitle: "Travel Collection",
         description: "Lakes, peaks and coastlines from a season on the road.",
@@ -436,6 +477,7 @@ export function seedState(): DemoState {
         avatar: A.sarah,
         sessions: 2,
         starred: false,
+<<<<<<< HEAD
         phone: "(555) 010-2481",
         company: "",
         city: "Cape Town",
@@ -446,6 +488,8 @@ export function seedState(): DemoState {
         createdAt: "2024-09-14",
         lastActivity: "2025-04-19",
         totalSpent: 4850,
+=======
+>>>>>>> origin/main
       },
       {
         id: "c2",
@@ -454,6 +498,7 @@ export function seedState(): DemoState {
         avatar: A.james,
         sessions: 1,
         starred: true,
+<<<<<<< HEAD
         phone: "(555) 010-7720",
         company: "Carter Travel Co.",
         city: "Johannesburg",
@@ -464,6 +509,8 @@ export function seedState(): DemoState {
         createdAt: "2024-11-02",
         lastActivity: "2025-04-17",
         totalSpent: 2180,
+=======
+>>>>>>> origin/main
       },
       {
         id: "c3",
@@ -472,6 +519,7 @@ export function seedState(): DemoState {
         avatar: A.emma,
         sessions: 3,
         starred: false,
+<<<<<<< HEAD
         phone: "(555) 010-3349",
         company: "",
         city: "Stellenbosch",
@@ -482,6 +530,8 @@ export function seedState(): DemoState {
         createdAt: "2023-05-21",
         lastActivity: "2025-04-18",
         totalSpent: 1960,
+=======
+>>>>>>> origin/main
       },
       {
         id: "c4",
@@ -490,6 +540,7 @@ export function seedState(): DemoState {
         avatar: A.david,
         sessions: 1,
         starred: false,
+<<<<<<< HEAD
         phone: "(555) 010-5186",
         company: "Amber & Oak Skincare",
         city: "Cape Town",
@@ -500,6 +551,8 @@ export function seedState(): DemoState {
         createdAt: "2025-02-11",
         lastActivity: "2025-04-12",
         totalSpent: 950,
+=======
+>>>>>>> origin/main
       },
       {
         id: "c5",
@@ -508,6 +561,7 @@ export function seedState(): DemoState {
         avatar: A.olivia,
         sessions: 0,
         starred: false,
+<<<<<<< HEAD
         phone: "(555) 010-9034",
         company: "",
         city: "Durban",
@@ -644,12 +698,17 @@ export function seedState(): DemoState {
         createdAt: "2024-07-08",
         lastActivity: "2024-09-28",
         totalSpent: 720,
+=======
+>>>>>>> origin/main
       },
     ],
     sessions: [
       {
         id: "s1",
+<<<<<<< HEAD
         kind: "shoot",
+=======
+>>>>>>> origin/main
         title: "Wedding Shoot",
         clientId: "c1",
         date: "2025-04-21",
@@ -662,7 +721,10 @@ export function seedState(): DemoState {
       },
       {
         id: "s2",
+<<<<<<< HEAD
         kind: "shoot",
+=======
+>>>>>>> origin/main
         title: "Family Session",
         clientId: "c3",
         date: "2025-04-23",
@@ -674,7 +736,10 @@ export function seedState(): DemoState {
       },
       {
         id: "s3",
+<<<<<<< HEAD
         kind: "consultation",
+=======
+>>>>>>> origin/main
         title: "Consultation",
         clientId: "c2",
         date: "2025-04-22",
@@ -687,7 +752,10 @@ export function seedState(): DemoState {
       },
       {
         id: "s4",
+<<<<<<< HEAD
         kind: "shoot",
+=======
+>>>>>>> origin/main
         title: "Product Shoot",
         clientId: "c4",
         date: "2025-04-24",
@@ -697,6 +765,7 @@ export function seedState(): DemoState {
         status: "confirmed",
         color: "info",
         note: "Photos",
+<<<<<<< HEAD
         notes:
           "Bring the white sweep and two softboxes. Client wants 3 hero shots for the homepage.",
         history: [
@@ -712,6 +781,11 @@ export function seedState(): DemoState {
       {
         id: "s5",
         kind: "shoot",
+=======
+      },
+      {
+        id: "s5",
+>>>>>>> origin/main
         title: "Portrait Session",
         clientId: "c5",
         date: "2025-04-25",
@@ -723,7 +797,10 @@ export function seedState(): DemoState {
       },
       {
         id: "s6",
+<<<<<<< HEAD
         kind: "shoot",
+=======
+>>>>>>> origin/main
         title: "Travel Shoot",
         clientId: "c2",
         date: "2025-04-28",
@@ -733,7 +810,10 @@ export function seedState(): DemoState {
         status: "confirmed",
         color: "success",
       },
+<<<<<<< HEAD
       ...demoAppointments(),
+=======
+>>>>>>> origin/main
     ],
     products: [
       {
@@ -906,6 +986,7 @@ export function seedState(): DemoState {
       },
     ],
     publishedTemplate: "modern",
+<<<<<<< HEAD
     clientNotes: seedClientNotes(),
     clientEvents: seedClientEvents(),
     invoices: seedInvoices(),
@@ -1117,3 +1198,7 @@ function demoAppointments(): Session[] {
     },
   ];
 }
+=======
+  };
+}
+>>>>>>> origin/main

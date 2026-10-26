@@ -11,11 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+<<<<<<< HEAD
 import { Route as BookRouteImport } from './routes/book'
+=======
+>>>>>>> origin/main
 import { Route as ClientPortalRouteImport } from './routes/client-portal'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PricingRouteImport } from './routes/pricing'
+<<<<<<< HEAD
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TemplatesRouteImport } from './routes/templates'
@@ -23,10 +27,18 @@ import { Route as WebsitePreviewRouteImport } from './routes/website-preview'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppEditorRouteImport } from './routes/_app/editor'
 import { Route as AppLeadsRouteImport } from './routes/_app/leads'
+=======
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as AppClientsRouteImport } from './routes/_app/clients'
+import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppEditorRouteImport } from './routes/_app/editor'
+>>>>>>> origin/main
 import { Route as AppMobileAppsRouteImport } from './routes/_app/mobile-apps'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppTeamRouteImport } from './routes/_app/team'
 import { Route as AppWebsiteRouteImport } from './routes/_app/website'
+<<<<<<< HEAD
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ShopCartRouteImport } from './routes/shop.cart'
@@ -62,6 +74,18 @@ import { Route as AppStoreProductsIdIndexRouteImport } from './routes/_app/store
 import { Route as AppStoreProductsIdEditRouteImport } from './routes/_app/store.products.$id.edit'
 import { Route as AppWebsiteBlogPostIdIndexRouteImport } from './routes/_app/website.blog.$postId.index'
 import { Route as AppWebsiteBlogPostIdPreviewRouteImport } from './routes/_app/website.blog.$postId.preview'
+=======
+import { Route as AppGalleriesIndexRouteImport } from './routes/_app/galleries.index'
+import { Route as AppStoreIndexRouteImport } from './routes/_app/store.index'
+import { Route as AppStoreOrdersRouteImport } from './routes/_app/store.orders'
+import { Route as AppStudioIndexRouteImport } from './routes/_app/studio.index'
+import { Route as AppStudioCalendarRouteImport } from './routes/_app/studio.calendar'
+import { Route as GIdIndexRouteImport } from './routes/g.$id.index'
+import { Route as GIdDownloadsRouteImport } from './routes/g.$id.downloads'
+import { Route as AppGalleriesIdIndexRouteImport } from './routes/_app/galleries.$id.index'
+import { Route as AppGalleriesIdSettingsRouteImport } from './routes/_app/galleries.$id.settings'
+import { Route as AppGalleriesIdUploadRouteImport } from './routes/_app/galleries.$id.upload'
+>>>>>>> origin/main
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -72,11 +96,14 @@ const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
+=======
+>>>>>>> origin/main
 const ClientPortalRoute = ClientPortalRouteImport.update({
   id: '/client-portal',
   path: '/client-portal',
@@ -97,11 +124,14 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+=======
+>>>>>>> origin/main
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -112,10 +142,17 @@ const TemplatesRoute = TemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 const WebsitePreviewRoute = WebsitePreviewRouteImport.update({
   id: '/website-preview',
   path: '/website-preview',
   getParentRoute: () => rootRouteImport,
+=======
+const AppClientsRoute = AppClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AppRoute,
+>>>>>>> origin/main
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
@@ -127,11 +164,14 @@ const AppEditorRoute = AppEditorRouteImport.update({
   path: '/editor',
   getParentRoute: () => AppRoute,
 } as any)
+<<<<<<< HEAD
 const AppLeadsRoute = AppLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
   getParentRoute: () => AppRoute,
 } as any)
+=======
+>>>>>>> origin/main
 const AppMobileAppsRoute = AppMobileAppsRouteImport.update({
   id: '/mobile-apps',
   path: '/mobile-apps',
@@ -152,6 +192,7 @@ const AppWebsiteRoute = AppWebsiteRouteImport.update({
   path: '/website',
   getParentRoute: () => AppRoute,
 } as any)
+<<<<<<< HEAD
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -182,6 +223,8 @@ const AppClientsIdRoute = AppClientsIdRouteImport.update({
   path: '/clients/$id',
   getParentRoute: () => AppRoute,
 } as any)
+=======
+>>>>>>> origin/main
 const AppGalleriesIndexRoute = AppGalleriesIndexRouteImport.update({
   id: '/galleries/',
   path: '/galleries/',
@@ -192,6 +235,7 @@ const AppStoreIndexRoute = AppStoreIndexRouteImport.update({
   path: '/store/',
   getParentRoute: () => AppRoute,
 } as any)
+<<<<<<< HEAD
 const AppStoreCouponsRoute = AppStoreCouponsRouteImport.update({
   id: '/store/coupons',
   path: '/store/coupons',
@@ -200,6 +244,11 @@ const AppStoreCouponsRoute = AppStoreCouponsRouteImport.update({
 const AppStoreSettingsRoute = AppStoreSettingsRouteImport.update({
   id: '/store/settings',
   path: '/store/settings',
+=======
+const AppStoreOrdersRoute = AppStoreOrdersRouteImport.update({
+  id: '/store/orders',
+  path: '/store/orders',
+>>>>>>> origin/main
   getParentRoute: () => AppRoute,
 } as any)
 const AppStudioIndexRoute = AppStudioIndexRouteImport.update({
@@ -212,6 +261,7 @@ const AppStudioCalendarRoute = AppStudioCalendarRouteImport.update({
   path: '/studio/calendar',
   getParentRoute: () => AppRoute,
 } as any)
+<<<<<<< HEAD
 const AppWebsiteIndexRoute = AppWebsiteIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -237,6 +287,8 @@ const AppWebsiteTemplatesRoute = AppWebsiteTemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => AppWebsiteRoute,
 } as any)
+=======
+>>>>>>> origin/main
 const GIdIndexRoute = GIdIndexRouteImport.update({
   id: '/g/$id/',
   path: '/g/$id/',
@@ -247,11 +299,14 @@ const GIdDownloadsRoute = GIdDownloadsRouteImport.update({
   path: '/g/$id/downloads',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 const ShopOrderOrderIdRoute = ShopOrderOrderIdRouteImport.update({
   id: '/order/$orderId',
   path: '/order/$orderId',
   getParentRoute: () => ShopRoute,
 } as any)
+=======
+>>>>>>> origin/main
 const AppGalleriesIdIndexRoute = AppGalleriesIdIndexRouteImport.update({
   id: '/galleries/$id/',
   path: '/galleries/$id/',
@@ -267,6 +322,7 @@ const AppGalleriesIdUploadRoute = AppGalleriesIdUploadRouteImport.update({
   path: '/galleries/$id/upload',
   getParentRoute: () => AppRoute,
 } as any)
+<<<<<<< HEAD
 const AppStoreOrdersIndexRoute = AppStoreOrdersIndexRouteImport.update({
   id: '/store/orders/',
   path: '/store/orders/',
@@ -333,10 +389,16 @@ const AppWebsiteBlogPostIdPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/book': typeof BookRoute
+=======
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+>>>>>>> origin/main
   '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+<<<<<<< HEAD
   '/shop': typeof ShopRouteWithChildren
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
@@ -387,12 +449,37 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/book': typeof BookRoute
+=======
+  '/signup': typeof SignupRoute
+  '/templates': typeof TemplatesRoute
+  '/clients': typeof AppClientsRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/editor': typeof AppEditorRoute
+  '/mobile-apps': typeof AppMobileAppsRoute
+  '/settings': typeof AppSettingsRoute
+  '/team': typeof AppTeamRoute
+  '/website': typeof AppWebsiteRoute
+  '/store/orders': typeof AppStoreOrdersRoute
+  '/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/galleries/': typeof AppGalleriesIndexRoute
+  '/store/': typeof AppStoreIndexRoute
+  '/studio/': typeof AppStudioIndexRoute
+  '/g/$id/': typeof GIdIndexRoute
+  '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/galleries/$id/': typeof AppGalleriesIdIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+>>>>>>> origin/main
   '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
+<<<<<<< HEAD
   '/website-preview': typeof WebsitePreviewRoute
   '/dashboard': typeof AppDashboardRoute
   '/editor': typeof AppEditorRoute
@@ -435,16 +522,39 @@ export interface FileRoutesByTo {
   '/website/blog/$postId/preview': typeof AppWebsiteBlogPostIdPreviewRoute
   '/store/products/$id': typeof AppStoreProductsIdIndexRoute
   '/website/blog/$postId': typeof AppWebsiteBlogPostIdIndexRoute
+=======
+  '/clients': typeof AppClientsRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/editor': typeof AppEditorRoute
+  '/mobile-apps': typeof AppMobileAppsRoute
+  '/settings': typeof AppSettingsRoute
+  '/team': typeof AppTeamRoute
+  '/website': typeof AppWebsiteRoute
+  '/store/orders': typeof AppStoreOrdersRoute
+  '/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/galleries': typeof AppGalleriesIndexRoute
+  '/store': typeof AppStoreIndexRoute
+  '/studio': typeof AppStudioIndexRoute
+  '/g/$id': typeof GIdIndexRoute
+  '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/galleries/$id': typeof AppGalleriesIdIndexRoute
+>>>>>>> origin/main
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+<<<<<<< HEAD
   '/book': typeof BookRoute
+=======
+>>>>>>> origin/main
   '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+<<<<<<< HEAD
   '/shop': typeof ShopRouteWithChildren
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
@@ -491,16 +601,41 @@ export interface FileRoutesById {
   '/_app/website/blog/$postId/preview': typeof AppWebsiteBlogPostIdPreviewRoute
   '/_app/store/products/$id/': typeof AppStoreProductsIdIndexRoute
   '/_app/website/blog/$postId/': typeof AppWebsiteBlogPostIdIndexRoute
+=======
+  '/signup': typeof SignupRoute
+  '/templates': typeof TemplatesRoute
+  '/_app/clients': typeof AppClientsRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/editor': typeof AppEditorRoute
+  '/_app/mobile-apps': typeof AppMobileAppsRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/team': typeof AppTeamRoute
+  '/_app/website': typeof AppWebsiteRoute
+  '/_app/store/orders': typeof AppStoreOrdersRoute
+  '/_app/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/_app/galleries/': typeof AppGalleriesIndexRoute
+  '/_app/store/': typeof AppStoreIndexRoute
+  '/_app/studio/': typeof AppStudioIndexRoute
+  '/g/$id/': typeof GIdIndexRoute
+  '/_app/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/_app/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/_app/galleries/$id/': typeof AppGalleriesIdIndexRoute
+>>>>>>> origin/main
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+<<<<<<< HEAD
     | '/book'
+=======
+>>>>>>> origin/main
     | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
+<<<<<<< HEAD
     | '/shop'
     | '/signup'
     | '/templates'
@@ -508,10 +643,18 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/editor'
     | '/leads'
+=======
+    | '/signup'
+    | '/templates'
+    | '/clients'
+    | '/dashboard'
+    | '/editor'
+>>>>>>> origin/main
     | '/mobile-apps'
     | '/settings'
     | '/team'
     | '/website'
+<<<<<<< HEAD
     | '/shop/$productId'
     | '/shop/cart'
     | '/shop/checkout'
@@ -551,12 +694,28 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/book'
+=======
+    | '/store/orders'
+    | '/studio/calendar'
+    | '/g/$id/downloads'
+    | '/galleries/'
+    | '/store/'
+    | '/studio/'
+    | '/g/$id/'
+    | '/galleries/$id/settings'
+    | '/galleries/$id/upload'
+    | '/galleries/$id/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+>>>>>>> origin/main
     | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
     | '/signup'
     | '/templates'
+<<<<<<< HEAD
     | '/website-preview'
     | '/dashboard'
     | '/editor'
@@ -599,15 +758,38 @@ export interface FileRouteTypes {
     | '/website/blog/$postId/preview'
     | '/store/products/$id'
     | '/website/blog/$postId'
+=======
+    | '/clients'
+    | '/dashboard'
+    | '/editor'
+    | '/mobile-apps'
+    | '/settings'
+    | '/team'
+    | '/website'
+    | '/store/orders'
+    | '/studio/calendar'
+    | '/g/$id/downloads'
+    | '/galleries'
+    | '/store'
+    | '/studio'
+    | '/g/$id'
+    | '/galleries/$id/settings'
+    | '/galleries/$id/upload'
+    | '/galleries/$id'
+>>>>>>> origin/main
   id:
     | '__root__'
     | '/'
     | '/_app'
+<<<<<<< HEAD
     | '/book'
+=======
+>>>>>>> origin/main
     | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
+<<<<<<< HEAD
     | '/shop'
     | '/signup'
     | '/templates'
@@ -615,10 +797,18 @@ export interface FileRouteTypes {
     | '/_app/dashboard'
     | '/_app/editor'
     | '/_app/leads'
+=======
+    | '/signup'
+    | '/templates'
+    | '/_app/clients'
+    | '/_app/dashboard'
+    | '/_app/editor'
+>>>>>>> origin/main
     | '/_app/mobile-apps'
     | '/_app/settings'
     | '/_app/team'
     | '/_app/website'
+<<<<<<< HEAD
     | '/shop/$productId'
     | '/shop/cart'
     | '/shop/checkout'
@@ -654,20 +844,40 @@ export interface FileRouteTypes {
     | '/_app/website/blog/$postId/preview'
     | '/_app/store/products/$id/'
     | '/_app/website/blog/$postId/'
+=======
+    | '/_app/store/orders'
+    | '/_app/studio/calendar'
+    | '/g/$id/downloads'
+    | '/_app/galleries/'
+    | '/_app/store/'
+    | '/_app/studio/'
+    | '/g/$id/'
+    | '/_app/galleries/$id/settings'
+    | '/_app/galleries/$id/upload'
+    | '/_app/galleries/$id/'
+>>>>>>> origin/main
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+<<<<<<< HEAD
   BookRoute: typeof BookRoute
+=======
+>>>>>>> origin/main
   ClientPortalRoute: typeof ClientPortalRoute
   FeaturesRoute: typeof FeaturesRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
+<<<<<<< HEAD
   ShopRoute: typeof ShopRouteWithChildren
   SignupRoute: typeof SignupRoute
   TemplatesRoute: typeof TemplatesRoute
   WebsitePreviewRoute: typeof WebsitePreviewRoute
+=======
+  SignupRoute: typeof SignupRoute
+  TemplatesRoute: typeof TemplatesRoute
+>>>>>>> origin/main
   GIdDownloadsRoute: typeof GIdDownloadsRoute
   GIdIndexRoute: typeof GIdIndexRoute
 }
@@ -688,6 +898,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
     '/book': {
       id: '/book'
       path: '/book'
@@ -695,6 +906,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
+=======
+>>>>>>> origin/main
     '/client-portal': {
       id: '/client-portal'
       path: '/client-portal'
@@ -723,6 +936,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -730,6 +944,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+=======
+>>>>>>> origin/main
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -744,12 +960,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
     '/website-preview': {
       id: '/website-preview'
       path: '/website-preview'
       fullPath: '/website-preview'
       preLoaderRoute: typeof WebsitePreviewRouteImport
       parentRoute: typeof rootRouteImport
+=======
+    '/_app/clients': {
+      id: '/_app/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof AppClientsRouteImport
+      parentRoute: typeof AppRoute
+>>>>>>> origin/main
     }
     '/_app/dashboard': {
       id: '/_app/dashboard'
@@ -765,6 +990,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEditorRouteImport
       parentRoute: typeof AppRoute
     }
+<<<<<<< HEAD
     '/_app/leads': {
       id: '/_app/leads'
       path: '/leads'
@@ -772,6 +998,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLeadsRouteImport
       parentRoute: typeof AppRoute
     }
+=======
+>>>>>>> origin/main
     '/_app/mobile-apps': {
       id: '/_app/mobile-apps'
       path: '/mobile-apps'
@@ -800,6 +1028,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWebsiteRouteImport
       parentRoute: typeof AppRoute
     }
+<<<<<<< HEAD
     '/shop/': {
       id: '/shop/'
       path: '/'
@@ -842,6 +1071,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientsIdRouteImport
       parentRoute: typeof AppRoute
     }
+=======
+>>>>>>> origin/main
     '/_app/galleries/': {
       id: '/_app/galleries/'
       path: '/galleries'
@@ -856,6 +1087,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStoreIndexRouteImport
       parentRoute: typeof AppRoute
     }
+<<<<<<< HEAD
     '/_app/store/coupons': {
       id: '/_app/store/coupons'
       path: '/store/coupons'
@@ -868,6 +1100,13 @@ declare module '@tanstack/react-router' {
       path: '/store/settings'
       fullPath: '/store/settings'
       preLoaderRoute: typeof AppStoreSettingsRouteImport
+=======
+    '/_app/store/orders': {
+      id: '/_app/store/orders'
+      path: '/store/orders'
+      fullPath: '/store/orders'
+      preLoaderRoute: typeof AppStoreOrdersRouteImport
+>>>>>>> origin/main
       parentRoute: typeof AppRoute
     }
     '/_app/studio/': {
@@ -884,6 +1123,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudioCalendarRouteImport
       parentRoute: typeof AppRoute
     }
+<<<<<<< HEAD
     '/_app/website/': {
       id: '/_app/website/'
       path: '/'
@@ -919,6 +1159,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWebsiteTemplatesRouteImport
       parentRoute: typeof AppWebsiteRoute
     }
+=======
+>>>>>>> origin/main
     '/g/$id/': {
       id: '/g/$id/'
       path: '/g/$id'
@@ -933,6 +1175,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GIdDownloadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
     '/shop/order/$orderId': {
       id: '/shop/order/$orderId'
       path: '/order/$orderId'
@@ -940,6 +1183,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopOrderOrderIdRouteImport
       parentRoute: typeof ShopRoute
     }
+=======
+>>>>>>> origin/main
     '/_app/galleries/$id/': {
       id: '/_app/galleries/$id/'
       path: '/galleries/$id'
@@ -961,6 +1206,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGalleriesIdUploadRouteImport
       parentRoute: typeof AppRoute
     }
+<<<<<<< HEAD
     '/_app/store/orders/': {
       id: '/_app/store/orders/'
       path: '/store/orders'
@@ -1091,11 +1337,27 @@ interface AppRouteChildren {
   AppStoreSettingsRoute: typeof AppStoreSettingsRoute
   AppStudioCalendarRoute: typeof AppStudioCalendarRoute
   AppClientsIndexRoute: typeof AppClientsIndexRoute
+=======
+  }
+}
+
+interface AppRouteChildren {
+  AppClientsRoute: typeof AppClientsRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppEditorRoute: typeof AppEditorRoute
+  AppMobileAppsRoute: typeof AppMobileAppsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTeamRoute: typeof AppTeamRoute
+  AppWebsiteRoute: typeof AppWebsiteRoute
+  AppStoreOrdersRoute: typeof AppStoreOrdersRoute
+  AppStudioCalendarRoute: typeof AppStudioCalendarRoute
+>>>>>>> origin/main
   AppGalleriesIndexRoute: typeof AppGalleriesIndexRoute
   AppStoreIndexRoute: typeof AppStoreIndexRoute
   AppStudioIndexRoute: typeof AppStudioIndexRoute
   AppGalleriesIdSettingsRoute: typeof AppGalleriesIdSettingsRoute
   AppGalleriesIdUploadRoute: typeof AppGalleriesIdUploadRoute
+<<<<<<< HEAD
   AppStoreOrdersIdRoute: typeof AppStoreOrdersIdRoute
   AppStoreProductsNewRoute: typeof AppStoreProductsNewRoute
   AppStudioSessionsIdRoute: typeof AppStudioSessionsIdRoute
@@ -1119,11 +1381,27 @@ const AppRouteChildren: AppRouteChildren = {
   AppStoreSettingsRoute: AppStoreSettingsRoute,
   AppStudioCalendarRoute: AppStudioCalendarRoute,
   AppClientsIndexRoute: AppClientsIndexRoute,
+=======
+  AppGalleriesIdIndexRoute: typeof AppGalleriesIdIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppClientsRoute: AppClientsRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppEditorRoute: AppEditorRoute,
+  AppMobileAppsRoute: AppMobileAppsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTeamRoute: AppTeamRoute,
+  AppWebsiteRoute: AppWebsiteRoute,
+  AppStoreOrdersRoute: AppStoreOrdersRoute,
+  AppStudioCalendarRoute: AppStudioCalendarRoute,
+>>>>>>> origin/main
   AppGalleriesIndexRoute: AppGalleriesIndexRoute,
   AppStoreIndexRoute: AppStoreIndexRoute,
   AppStudioIndexRoute: AppStudioIndexRoute,
   AppGalleriesIdSettingsRoute: AppGalleriesIdSettingsRoute,
   AppGalleriesIdUploadRoute: AppGalleriesIdUploadRoute,
+<<<<<<< HEAD
   AppStoreOrdersIdRoute: AppStoreOrdersIdRoute,
   AppStoreProductsNewRoute: AppStoreProductsNewRoute,
   AppStudioSessionsIdRoute: AppStudioSessionsIdRoute,
@@ -1132,10 +1410,14 @@ const AppRouteChildren: AppRouteChildren = {
   AppStoreProductsIndexRoute: AppStoreProductsIndexRoute,
   AppStoreProductsIdEditRoute: AppStoreProductsIdEditRoute,
   AppStoreProductsIdIndexRoute: AppStoreProductsIdIndexRoute,
+=======
+  AppGalleriesIdIndexRoute: AppGalleriesIdIndexRoute,
+>>>>>>> origin/main
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+<<<<<<< HEAD
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
   ShopCartRoute: typeof ShopCartRoute
@@ -1158,14 +1440,24 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   BookRoute: BookRoute,
+=======
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+>>>>>>> origin/main
   ClientPortalRoute: ClientPortalRoute,
   FeaturesRoute: FeaturesRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
+<<<<<<< HEAD
   ShopRoute: ShopRouteWithChildren,
   SignupRoute: SignupRoute,
   TemplatesRoute: TemplatesRoute,
   WebsitePreviewRoute: WebsitePreviewRoute,
+=======
+  SignupRoute: SignupRoute,
+  TemplatesRoute: TemplatesRoute,
+>>>>>>> origin/main
   GIdDownloadsRoute: GIdDownloadsRoute,
   GIdIndexRoute: GIdIndexRoute,
 }

@@ -14,7 +14,10 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { DemoProvider } from "@/lib/store";
+<<<<<<< HEAD
 import { ShopProvider } from "@/lib/shop";
+=======
+>>>>>>> origin/main
 
 function NotFoundComponent() {
   return (
@@ -121,6 +124,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <DemoProvider>
+<<<<<<< HEAD
         <ShopProvider>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
@@ -131,6 +135,16 @@ function RootComponent() {
             }}
           />
         </ShopProvider>
+=======
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            classNames: { toast: "bg-popover text-popover-foreground border-border" },
+          }}
+        />
+>>>>>>> origin/main
       </DemoProvider>
     </QueryClientProvider>
   );
