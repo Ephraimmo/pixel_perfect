@@ -14,7 +14,6 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { DemoProvider } from "@/lib/store";
-import { CartProvider } from "@/lib/cart";
 
 function NotFoundComponent() {
   return (
@@ -121,11 +120,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <DemoProvider>
-        <CartProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          <Toaster position="bottom-right" toastOptions={{ classNames: { toast: "bg-popover text-popover-foreground border-border" } }} />
-        </CartProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            classNames: { toast: "bg-popover text-popover-foreground border-border" },
+          }}
+        />
       </DemoProvider>
     </QueryClientProvider>
   );

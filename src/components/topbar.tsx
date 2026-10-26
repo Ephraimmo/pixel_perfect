@@ -1,16 +1,9 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, LogOut, RotateCcw, Search } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Bell, ChevronDown, LogOut, RotateCcw, Search, Settings, User } from "lucide-react";
+import { toast } from "sonner";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,228 +12,163 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/kit";
 import { useDemo } from "@/lib/store";
-import { photo } from "@/lib/demo-data";
+import { avatar } from "@/lib/demo-data";
 
-const segmentLabels: Record<string, string> = {
-  dashboard: "Dashboard",
-  galleries: "Galleries",
-  new: "New gallery",
-  settings: "Settings",
-  activity: "Activity",
-  clients: "Clients",
-  contacts: "Contacts",
-  studio: "Studio",
-  calendar: "Calendar",
-  sessions: "Sessions",
-  leads: "Leads",
-  quotes: "Quotes",
-  contracts: "Contracts",
-  invoices: "Invoices",
-  questionnaires: "Questionnaires",
-  automations: "Automations",
-  website: "Website",
-  pages: "Pages",
-  templates: "Templates",
-  design: "Design",
-  domain: "Domain",
-  preview: "Preview",
-  store: "Store",
-  products: "Products",
-  orders: "Orders",
-  coupons: "Coupons",
-  editor: "Editor",
-  integrations: "Integrations",
-  "mobile-apps": "Mobile apps",
-  profile: "Profile",
-  branding: "Branding",
-  billing: "Billing",
-  team: "Team",
-  security: "Security",
-  favorites: "Favorites",
-  downloads: "Downloads",
-};
-
-function Breadcrumbs() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const parts = pathname.split("/").filter(Boolean);
-  const crumbs = parts.map((part, i) => {
-    const label = segmentLabels[part] ?? (part.startsWith("g-") ? "Gallery" : part);
-    return { label, href: "/" + parts.slice(0, i + 1).join("/") };
-  });
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        {crumbs.map((crumb, i) => {
-          const last = i === crumbs.length - 1;
-          const isId = !segmentLabels[part];
-          return (
-            <BreadcrumbItem key={crumb.href}>
-              {last ? (
-                <BreadcrumbPage className="max-w-48 truncate">{crumb.label}</BreadcrumbPage>
-              ) : isId ? (
-                <span className="max-w-48 truncate text-muted-foreground">{crumb.label}</span>
-              ) : (
-                <Link to={crumb.href} className="max-w-40 truncate text-muted-foreground transition-colors hover:text-foreground">
-                  {crumb.label}
-                </Link>
-              )}
-              {last ? null : <BreadcrumbSeparator />}
-            </BreadcrumbItem>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
-
-const navEntries: { title: string; to: string; group: string }[] = [
-  { title: "Dashboard", to: "/dashboard", group: "Overview" },
-  { title: "Galleries", to: "/galleries", group: "Work" },
-  { title: "New gallery", to: "/galleries/new", group: "Work" },
-  { title: "Studio", to: "/studio", group: "Work" },
-  { title: "Store", to: "/store", group: "Work" },
-  { title: "Website", to: "/website", group: "Work" },
-  { title: "Editor", to: "/editor", group: "Work" },
-  { title: "Clients", to: "/clients", group: "People" },
-  { title: "Contacts", to: "/contacts", group: "People" },
-  { title: "Settings", to: "/settings/profile", group: "Account" },
-  { title: "Integrations", to: "/integrations", group: "Account" },
-  { title: "Mobile apps", to: "/mobile-apps", group: "Account" },
-];
-
-function SearchDialog() {
+function SearchBox() {
   const { state: demo } = useDemo();
-  const [open, setOpen] = useState(false);
-  const go = (to: string) => {
-    setOpen(false);
-    window.dispatchEvent(new CustomEvent("pixora:navigate", { detail: to }));
-  };
-  const q = (s: string) => s.toLowerCase();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+
+  const results = q
+    ? [
+        ...demo.galleries
+          .filter((g) => g.title.toLowerCase().includes(q))
+          .map((g) => ({
+            key: g.id,
+            label: g.title,
+            kind: "Gallery",
+            go: () => navigate({ to: "/galleries/$id", params: { id: g.id } }),
+          })),
+        ...demo.clients
+          .filter((c) => c.name.toLowerCase().includes(q))
+          .map((c) => ({
+            key: c.id,
+            label: c.name,
+            kind: "Client",
+            go: () => navigate({ to: "/clients" }),
+          })),
+        ...demo.products
+          .filter((p) => p.name.toLowerCase().includes(q))
+          .map((p) => ({
+            key: p.id,
+            label: p.name,
+            kind: "Product",
+            go: () => navigate({ to: "/store" }),
+          })),
+      ].slice(0, 8)
+    : [];
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-56 justify-start gap-2 text-muted-foreground max-sm:w-9 max-sm:px-0" aria-label="Search">
-          <Search className="h-3.5 w-3.5" />
-          <span className="text-xs font-normal max-sm:hidden">Search Pixora…</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-lg p-0">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Search</DialogTitle>
-          <DialogDescription>Jump to a page, gallery or client</DialogDescription>
-        </DialogHeader>
-        <Command>
-          <CommandInput placeholder="Search pages, galleries, clients…" />
-          <CommandList>
-            <CommandEmpty>No results.</CommandEmpty>
-            <CommandGroup heading="Pages">
-              {navEntries.map((n) => (
-                <CommandItem key={n.to} value={`page ${n.title}`} onSelect={() => go(n.to)}>
-                  {n.title}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            <CommandGroup heading="Galleries">
-              {demo.galleries.slice(0, 6).map((g) => (
-                <CommandItem key={g.id} value={`gallery ${q(g.title)}`} onSelect={() => go(`/galleries/${g.id}`)}>
-                  {g.title}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            <CommandGroup heading="Clients">
-              {demo.clients.slice(0, 6).map((c) => (
-                <CommandItem key={c.id} value={`client ${q(c.name)}`} onSelect={() => go(`/clients/${c.id}`)}>
-                  {c.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </DialogContent>
-    </Dialog>
+    <div className="relative w-full max-w-xs">
+      <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setQuery("");
+          if (e.key === "Enter" && results[0]) {
+            void results[0].go();
+            setQuery("");
+          }
+        }}
+        placeholder="Search anything..."
+        aria-label="Search"
+        className="h-8 w-full rounded-md border bg-card pl-8 pr-3 text-xs outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
+      />
+      {q ? (
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-md border bg-popover shadow-lift">
+          {results.length === 0 ? (
+            <p className="px-3 py-2.5 text-xs text-muted-foreground">No results for "{query}"</p>
+          ) : (
+            results.map((r) => (
+              <button
+                key={r.key}
+                type="button"
+                onClick={() => {
+                  void r.go();
+                  setQuery("");
+                }}
+                className="flex w-full items-center justify-between px-3 py-2 text-left text-xs hover:bg-accent"
+              >
+                <span className="truncate">{r.label}</span>
+                <span className="text-[10px] text-muted-foreground">{r.kind}</span>
+              </button>
+            ))
+          )}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
 function Notifications() {
   const { state: demo } = useDemo();
-  const [open, setOpen] = useState(false);
-  const go = (to: string) => {
-    setOpen(false);
-    window.dispatchEvent(new CustomEvent("pixora:navigate", { detail: to }));
-  };
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="Notifications"
+          className="relative rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+        >
           <Bell className="h-4 w-4" />
-          {demo.activity.length > 0 ? (
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-clay" />
-          ) : null}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <DropdownMenuLabel>Recent activity</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {demo.activity.slice(0, 6).map((a) => (
-          <DropdownMenuItem key={a.id} className="flex-col items-start gap-0.5 py-2" onSelect={() => go("/dashboard/activity")}>
-            <p className="line-clamp-2 text-xs text-foreground">{a.message}</p>
-            <p className="text-[10px] text-muted-foreground">{new Date(a.time).toLocaleString()}</p>
-          </DropdownMenuItem>
-        ))}
-        {demo.activity.length === 0 ? (
-          <p className="px-3 py-6 text-center text-xs text-muted-foreground">Nothing new yet.</p>
-        ) : null}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-rose" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-72 p-0">
+        <p className="border-b px-4 py-2.5 text-xs font-semibold">Notifications</p>
+        <ul className="divide-y">
+          {demo.activity.map((a) => (
+            <li key={a.id} className="flex gap-2.5 px-4 py-2.5">
+              <Avatar src={avatar(a.avatar)} alt="" className="h-7 w-7" />
+              <div className="min-w-0">
+                <p className="truncate text-xs font-medium">{a.title}</p>
+                <p className="text-[11px] text-muted-foreground">{a.time}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </PopoverContent>
+    </Popover>
   );
 }
 
 export function Topbar() {
-  const { state: demo, signOut, resetDemo } = useDemo();
+  const { state: demo, resetDemo } = useDemo();
+  const navigate = useNavigate();
+
   return (
-    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b bg-background/85 px-4 backdrop-blur">
-      <Breadcrumbs />
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur sm:px-6">
+      <SidebarTrigger className="-ml-1 md:hidden" />
+      <SearchBox />
       <div className="ml-auto flex items-center gap-1.5">
-        <SearchDialog />
         <Notifications />
+        <Link
+          to="/team"
+          aria-label="Team"
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+        >
+          <User className="h-4 w-4" />
+        </Link>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-full p-1 pr-2 text-left transition-colors hover:bg-accent" aria-label="Account menu">
-              <Avatar className="h-7 w-7">
-                <AvatarImage src={photo("pixora-owner-avatar", 80, 80)} alt="" />
-                <AvatarFallback>AM</AvatarFallback>
-              </Avatar>
-              <span className="hidden text-xs font-semibold sm:inline">{demo.studioName}</span>
-            </button>
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-md py-1 pl-1 pr-1.5 hover:bg-accent">
+            <Avatar src={avatar(demo.profile.avatar)} alt="" className="h-7 w-7" />
+            <span className="text-xs font-medium max-sm:hidden">{demo.profile.name}</span>
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <p className="text-sm font-semibold">Alex Mercer</p>
-              <p className="text-xs font-normal text-muted-foreground">Owner · alex@pixora.studio</p>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuLabel className="font-normal">
+              <p className="text-sm font-medium">{demo.profile.name}</p>
+              <p className="text-xs text-muted-foreground">{demo.profile.email}</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/settings/profile">Account settings</Link>
+            <DropdownMenuItem onSelect={() => navigate({ to: "/settings" })}>
+              <Settings className="h-4 w-4" /> Account settings
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => {
                 resetDemo();
-                window.location.href = "/dashboard";
+                toast.success("Demo data reset");
               }}
             >
-              <RotateCcw className="h-3.5 w-3.5" /> Reset demo data
+              <RotateCcw className="h-4 w-4" /> Reset demo data
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => {
-                signOut();
-                window.location.href = "/";
-              }}
-            >
-              <LogOut className="h-3.5 w-3.5" /> Sign out
+            <DropdownMenuItem onSelect={() => navigate({ to: "/login" })}>
+              <LogOut className="h-4 w-4" /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

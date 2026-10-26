@@ -11,14 +11,29 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as ClientPortalRouteImport } from './routes/client-portal'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as AppClientsRouteImport } from './routes/_app/clients'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
-import { Route as AppDashboardActivityRouteImport } from './routes/_app/dashboard/activity'
-import { Route as AppDashboardSettingsRouteImport } from './routes/_app/dashboard/settings'
+import { Route as AppEditorRouteImport } from './routes/_app/editor'
+import { Route as AppMobileAppsRouteImport } from './routes/_app/mobile-apps'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppTeamRouteImport } from './routes/_app/team'
+import { Route as AppWebsiteRouteImport } from './routes/_app/website'
+import { Route as AppGalleriesIndexRouteImport } from './routes/_app/galleries.index'
+import { Route as AppStoreIndexRouteImport } from './routes/_app/store.index'
+import { Route as AppStoreOrdersRouteImport } from './routes/_app/store.orders'
+import { Route as AppStudioIndexRouteImport } from './routes/_app/studio.index'
+import { Route as AppStudioCalendarRouteImport } from './routes/_app/studio.calendar'
+import { Route as GIdIndexRouteImport } from './routes/g.$id.index'
+import { Route as GIdDownloadsRouteImport } from './routes/g.$id.downloads'
+import { Route as AppGalleriesIdIndexRouteImport } from './routes/_app/galleries.$id.index'
+import { Route as AppGalleriesIdSettingsRouteImport } from './routes/_app/galleries.$id.settings'
+import { Route as AppGalleriesIdUploadRouteImport } from './routes/_app/galleries.$id.upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientPortalRoute = ClientPortalRouteImport.update({
+  id: '/client-portal',
+  path: '/client-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeaturesRoute = FeaturesRouteImport.update({
@@ -54,102 +74,265 @@ const TemplatesRoute = TemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppClientsRoute = AppClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
-const AppDashboardActivityRoute = AppDashboardActivityRouteImport.update({
-  id: '/activity',
-  path: '/activity',
-  getParentRoute: () => AppDashboardRoute,
+const AppEditorRoute = AppEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => AppRoute,
 } as any)
-const AppDashboardSettingsRoute = AppDashboardSettingsRouteImport.update({
+const AppMobileAppsRoute = AppMobileAppsRouteImport.update({
+  id: '/mobile-apps',
+  path: '/mobile-apps',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AppDashboardRoute,
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTeamRoute = AppTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppWebsiteRoute = AppWebsiteRouteImport.update({
+  id: '/website',
+  path: '/website',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGalleriesIndexRoute = AppGalleriesIndexRouteImport.update({
+  id: '/galleries/',
+  path: '/galleries/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStoreIndexRoute = AppStoreIndexRouteImport.update({
+  id: '/store/',
+  path: '/store/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStoreOrdersRoute = AppStoreOrdersRouteImport.update({
+  id: '/store/orders',
+  path: '/store/orders',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudioIndexRoute = AppStudioIndexRouteImport.update({
+  id: '/studio/',
+  path: '/studio/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudioCalendarRoute = AppStudioCalendarRouteImport.update({
+  id: '/studio/calendar',
+  path: '/studio/calendar',
+  getParentRoute: () => AppRoute,
+} as any)
+const GIdIndexRoute = GIdIndexRouteImport.update({
+  id: '/g/$id/',
+  path: '/g/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GIdDownloadsRoute = GIdDownloadsRouteImport.update({
+  id: '/g/$id/downloads',
+  path: '/g/$id/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppGalleriesIdIndexRoute = AppGalleriesIdIndexRouteImport.update({
+  id: '/galleries/$id/',
+  path: '/galleries/$id/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGalleriesIdSettingsRoute = AppGalleriesIdSettingsRouteImport.update({
+  id: '/galleries/$id/settings',
+  path: '/galleries/$id/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGalleriesIdUploadRoute = AppGalleriesIdUploadRouteImport.update({
+  id: '/galleries/$id/upload',
+  path: '/galleries/$id/upload',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
-  '/dashboard': typeof AppDashboardRouteWithChildren
-  '/dashboard/activity': typeof AppDashboardActivityRoute
-  '/dashboard/settings': typeof AppDashboardSettingsRoute
+  '/clients': typeof AppClientsRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/editor': typeof AppEditorRoute
+  '/mobile-apps': typeof AppMobileAppsRoute
+  '/settings': typeof AppSettingsRoute
+  '/team': typeof AppTeamRoute
+  '/website': typeof AppWebsiteRoute
+  '/store/orders': typeof AppStoreOrdersRoute
+  '/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/galleries/': typeof AppGalleriesIndexRoute
+  '/store/': typeof AppStoreIndexRoute
+  '/studio/': typeof AppStudioIndexRoute
+  '/g/$id/': typeof GIdIndexRoute
+  '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/galleries/$id/': typeof AppGalleriesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
-  '/dashboard': typeof AppDashboardRouteWithChildren
-  '/dashboard/activity': typeof AppDashboardActivityRoute
-  '/dashboard/settings': typeof AppDashboardSettingsRoute
+  '/clients': typeof AppClientsRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/editor': typeof AppEditorRoute
+  '/mobile-apps': typeof AppMobileAppsRoute
+  '/settings': typeof AppSettingsRoute
+  '/team': typeof AppTeamRoute
+  '/website': typeof AppWebsiteRoute
+  '/store/orders': typeof AppStoreOrdersRoute
+  '/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/galleries': typeof AppGalleriesIndexRoute
+  '/store': typeof AppStoreIndexRoute
+  '/studio': typeof AppStudioIndexRoute
+  '/g/$id': typeof GIdIndexRoute
+  '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/galleries/$id': typeof AppGalleriesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/client-portal': typeof ClientPortalRoute
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
   '/templates': typeof TemplatesRoute
-  '/_app/dashboard': typeof AppDashboardRouteWithChildren
-  '/_app/dashboard/activity': typeof AppDashboardActivityRoute
-  '/_app/dashboard/settings': typeof AppDashboardSettingsRoute
+  '/_app/clients': typeof AppClientsRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/editor': typeof AppEditorRoute
+  '/_app/mobile-apps': typeof AppMobileAppsRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/team': typeof AppTeamRoute
+  '/_app/website': typeof AppWebsiteRoute
+  '/_app/store/orders': typeof AppStoreOrdersRoute
+  '/_app/studio/calendar': typeof AppStudioCalendarRoute
+  '/g/$id/downloads': typeof GIdDownloadsRoute
+  '/_app/galleries/': typeof AppGalleriesIndexRoute
+  '/_app/store/': typeof AppStoreIndexRoute
+  '/_app/studio/': typeof AppStudioIndexRoute
+  '/g/$id/': typeof GIdIndexRoute
+  '/_app/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
+  '/_app/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/_app/galleries/$id/': typeof AppGalleriesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
     | '/signup'
     | '/templates'
+    | '/clients'
     | '/dashboard'
-    | '/dashboard/activity'
-    | '/dashboard/settings'
+    | '/editor'
+    | '/mobile-apps'
+    | '/settings'
+    | '/team'
+    | '/website'
+    | '/store/orders'
+    | '/studio/calendar'
+    | '/g/$id/downloads'
+    | '/galleries/'
+    | '/store/'
+    | '/studio/'
+    | '/g/$id/'
+    | '/galleries/$id/settings'
+    | '/galleries/$id/upload'
+    | '/galleries/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
     | '/signup'
     | '/templates'
+    | '/clients'
     | '/dashboard'
-    | '/dashboard/activity'
-    | '/dashboard/settings'
+    | '/editor'
+    | '/mobile-apps'
+    | '/settings'
+    | '/team'
+    | '/website'
+    | '/store/orders'
+    | '/studio/calendar'
+    | '/g/$id/downloads'
+    | '/galleries'
+    | '/store'
+    | '/studio'
+    | '/g/$id'
+    | '/galleries/$id/settings'
+    | '/galleries/$id/upload'
+    | '/galleries/$id'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/client-portal'
     | '/features'
     | '/login'
     | '/pricing'
     | '/signup'
     | '/templates'
+    | '/_app/clients'
     | '/_app/dashboard'
-    | '/_app/dashboard/activity'
-    | '/_app/dashboard/settings'
+    | '/_app/editor'
+    | '/_app/mobile-apps'
+    | '/_app/settings'
+    | '/_app/team'
+    | '/_app/website'
+    | '/_app/store/orders'
+    | '/_app/studio/calendar'
+    | '/g/$id/downloads'
+    | '/_app/galleries/'
+    | '/_app/store/'
+    | '/_app/studio/'
+    | '/g/$id/'
+    | '/_app/galleries/$id/settings'
+    | '/_app/galleries/$id/upload'
+    | '/_app/galleries/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  ClientPortalRoute: typeof ClientPortalRoute
   FeaturesRoute: typeof FeaturesRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SignupRoute: typeof SignupRoute
   TemplatesRoute: typeof TemplatesRoute
+  GIdDownloadsRoute: typeof GIdDownloadsRoute
+  GIdIndexRoute: typeof GIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -166,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/client-portal': {
+      id: '/client-portal'
+      path: '/client-portal'
+      fullPath: '/client-portal'
+      preLoaderRoute: typeof ClientPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/features': {
@@ -203,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/clients': {
+      id: '/_app/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof AppClientsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -210,43 +407,148 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/dashboard/activity': {
-      id: '/_app/dashboard/activity'
-      path: '/activity'
-      fullPath: '/dashboard/activity'
-      preLoaderRoute: typeof AppDashboardActivityRouteImport
-      parentRoute: typeof AppDashboardRoute
+    '/_app/editor': {
+      id: '/_app/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof AppEditorRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/dashboard/settings': {
-      id: '/_app/dashboard/settings'
+    '/_app/mobile-apps': {
+      id: '/_app/mobile-apps'
+      path: '/mobile-apps'
+      fullPath: '/mobile-apps'
+      preLoaderRoute: typeof AppMobileAppsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
       path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof AppDashboardSettingsRouteImport
-      parentRoute: typeof AppDashboardRoute
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/team': {
+      id: '/_app/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AppTeamRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/website': {
+      id: '/_app/website'
+      path: '/website'
+      fullPath: '/website'
+      preLoaderRoute: typeof AppWebsiteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/galleries/': {
+      id: '/_app/galleries/'
+      path: '/galleries'
+      fullPath: '/galleries/'
+      preLoaderRoute: typeof AppGalleriesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/store/': {
+      id: '/_app/store/'
+      path: '/store'
+      fullPath: '/store/'
+      preLoaderRoute: typeof AppStoreIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/store/orders': {
+      id: '/_app/store/orders'
+      path: '/store/orders'
+      fullPath: '/store/orders'
+      preLoaderRoute: typeof AppStoreOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/studio/': {
+      id: '/_app/studio/'
+      path: '/studio'
+      fullPath: '/studio/'
+      preLoaderRoute: typeof AppStudioIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/studio/calendar': {
+      id: '/_app/studio/calendar'
+      path: '/studio/calendar'
+      fullPath: '/studio/calendar'
+      preLoaderRoute: typeof AppStudioCalendarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/g/$id/': {
+      id: '/g/$id/'
+      path: '/g/$id'
+      fullPath: '/g/$id/'
+      preLoaderRoute: typeof GIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/g/$id/downloads': {
+      id: '/g/$id/downloads'
+      path: '/g/$id/downloads'
+      fullPath: '/g/$id/downloads'
+      preLoaderRoute: typeof GIdDownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/galleries/$id/': {
+      id: '/_app/galleries/$id/'
+      path: '/galleries/$id'
+      fullPath: '/galleries/$id/'
+      preLoaderRoute: typeof AppGalleriesIdIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/galleries/$id/settings': {
+      id: '/_app/galleries/$id/settings'
+      path: '/galleries/$id/settings'
+      fullPath: '/galleries/$id/settings'
+      preLoaderRoute: typeof AppGalleriesIdSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/galleries/$id/upload': {
+      id: '/_app/galleries/$id/upload'
+      path: '/galleries/$id/upload'
+      fullPath: '/galleries/$id/upload'
+      preLoaderRoute: typeof AppGalleriesIdUploadRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
-interface AppDashboardRouteChildren {
-  AppDashboardActivityRoute: typeof AppDashboardActivityRoute
-  AppDashboardSettingsRoute: typeof AppDashboardSettingsRoute
-}
-
-const AppDashboardRouteChildren: AppDashboardRouteChildren = {
-  AppDashboardActivityRoute: AppDashboardActivityRoute,
-  AppDashboardSettingsRoute: AppDashboardSettingsRoute,
-}
-
-const AppDashboardRouteWithChildren = AppDashboardRoute._addFileChildren(
-  AppDashboardRouteChildren,
-)
-
 interface AppRouteChildren {
-  AppDashboardRoute: typeof AppDashboardRouteWithChildren
+  AppClientsRoute: typeof AppClientsRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppEditorRoute: typeof AppEditorRoute
+  AppMobileAppsRoute: typeof AppMobileAppsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTeamRoute: typeof AppTeamRoute
+  AppWebsiteRoute: typeof AppWebsiteRoute
+  AppStoreOrdersRoute: typeof AppStoreOrdersRoute
+  AppStudioCalendarRoute: typeof AppStudioCalendarRoute
+  AppGalleriesIndexRoute: typeof AppGalleriesIndexRoute
+  AppStoreIndexRoute: typeof AppStoreIndexRoute
+  AppStudioIndexRoute: typeof AppStudioIndexRoute
+  AppGalleriesIdSettingsRoute: typeof AppGalleriesIdSettingsRoute
+  AppGalleriesIdUploadRoute: typeof AppGalleriesIdUploadRoute
+  AppGalleriesIdIndexRoute: typeof AppGalleriesIdIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppDashboardRoute: AppDashboardRouteWithChildren,
+  AppClientsRoute: AppClientsRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppEditorRoute: AppEditorRoute,
+  AppMobileAppsRoute: AppMobileAppsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTeamRoute: AppTeamRoute,
+  AppWebsiteRoute: AppWebsiteRoute,
+  AppStoreOrdersRoute: AppStoreOrdersRoute,
+  AppStudioCalendarRoute: AppStudioCalendarRoute,
+  AppGalleriesIndexRoute: AppGalleriesIndexRoute,
+  AppStoreIndexRoute: AppStoreIndexRoute,
+  AppStudioIndexRoute: AppStudioIndexRoute,
+  AppGalleriesIdSettingsRoute: AppGalleriesIdSettingsRoute,
+  AppGalleriesIdUploadRoute: AppGalleriesIdUploadRoute,
+  AppGalleriesIdIndexRoute: AppGalleriesIdIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -254,11 +556,14 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  ClientPortalRoute: ClientPortalRoute,
   FeaturesRoute: FeaturesRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SignupRoute: SignupRoute,
   TemplatesRoute: TemplatesRoute,
+  GIdDownloadsRoute: GIdDownloadsRoute,
+  GIdIndexRoute: GIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

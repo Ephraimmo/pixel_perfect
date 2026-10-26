@@ -1,33 +1,21 @@
 # Pixora Roadmap
 
-## Phase 1 — Foundation, design system, marketing, dashboard
-- [x] Inspect project, record brief
-- [x] Design tokens (src/styles.css), fonts in __root
-- [x] Demo data + store (types, seed, localStorage persistence, reset)
-- [x] App shell: sidebar, topbar, breadcrumbs, search, notifications, profile menu
-- [x] Marketing: /, /features, /pricing, /templates, /login, /signup
-- [x] Dashboard: /dashboard, /dashboard/activity, /dashboard/settings
+Implements the 24-screen Pixora mockup with local demo data (no backend).
 
-## Phase 2 — Galleries & client delivery
-- [x] /galleries list (search, filter, sort, grid/list, bulk actions)
-- [x] /galleries/new (create + simulated upload)
-- [x] /galleries/:id (browser, masonry, selection, captions)
-- [x] /galleries/:id/settings, /favorites, /downloads
-- [x] Client-facing /g/:shareSlug (browse, favorite, download)
-- [x] /proof/:gallerySlug proofing, /client-portal
+## Public
+- [x] `/` landing, `/signup`, `/login` (+ `/features`, `/pricing`, `/templates` from the nav)
+- [x] `/g/:id` client gallery (favorites, lightbox, password gate) and `/g/:id/downloads`
+- [x] `/client-portal`
 
-## Phase 3 — Clients, CRM, studio
-- [x] /clients, /clients/:id, /contacts
-- [x] /studio + calendar, sessions, leads, quotes, contracts, invoices, questionnaires, automations
-- [x] /book/:slug booking page → lead pipeline
+## Studio app (sidebar shell)
+- [x] `/dashboard`
+- [x] `/galleries`, `/galleries/:id`, `/galleries/:id/upload`, `/galleries/:id/settings`
+- [x] `/clients`
+- [x] `/studio` sessions, `/studio/calendar` (month / week / day)
+- [x] `/website` templates
+- [x] `/store` products, `/store/orders`
+- [x] `/editor` photo editor
+- [x] `/mobile-apps`, `/team` (team & integrations), `/settings`
 
-## Phase 4 — Website builder, store, checkout
-- [x] /website + pages, templates, design, domain, preview
-- [x] /store + products, orders, coupons, settings; cart + /checkout/:id demo checkout
-
-## Phase 5 — Tools, account, QA
-- [x] /editor workspace (adjustments + reset)
-- [x] /mobile-apps, /integrations, /settings/* (5 pages)
-- [x] Verify routes, interactions, responsive, console errors
-
-Status markers updated as work completes.
+Demo state lives in `src/lib/store.tsx` (persisted to localStorage, reset from the profile menu);
+seed data and Unsplash photo ids are in `src/lib/demo-data.ts`.

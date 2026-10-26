@@ -1,25 +1,20 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Loader2, LogIn } from "lucide-react";
-import { MarketingFooter } from "@/components/marketing";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { AuthLayout, SocialButtons } from "@/components/auth-layout";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Link } from "@tanstack/react-router";
-import { useDemo } from "@/lib/store";
-import { photoWide } from "@/lib/demo-data";
+import { PHOTOS, img } from "@/lib/demo-data";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — Pixora" },
-      { name: "description", content: "Sign in to your Pixora workspace. In this demo, any details open the full sample studio." },
-      { property: "og:title", content: "Sign in — Pixora" },
-      { property: "og:description", content: "Sign in to your Pixora workspace. Demo mode — no real accounts." },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: photoWide("pixora-login", 1600, 1000) },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: photoWide("pixora-login", 1600, 1000) },
+      { title: "Log in — Pixora" },
+      { name: "description", content: "Log in to your Pixora account." },
+      { property: "og:title", content: "Log in — Pixora" },
+      { property: "og:description", content: "Log in to your Pixora account." },
     ],
   }),
   component: Login,
@@ -27,73 +22,80 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const navigate = useNavigate();
-  const { signInDemo } = useDemo();
-  const [email, setEmail] = useState("alex@pixora.studio");
-  const [password, setPassword] = useState("demo-only");
-  const [signingIn, setSigningIn] = useState(false);
+  const [email, setEmail] = useState("karabo@pixora.com");
+  const [password, setPassword] = useState("demo-password");
+  const [remember, setRemember] = useState(true);
+  const [busy, setBusy] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSigningIn(true);
-    signInDemo();
+    setBusy(true);
     void navigate({ to: "/dashboard" });
   };
 
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col justify-center px-6 py-12 sm:px-12">
-        <div className="mx-auto w-full max-w-sm">
-          <p className="eyebrow">Welcome back</p>
-          <h1 className="display-title mt-2 text-3xl">Sign in to Pixora</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Demo mode: no real accounts exist. Any email opens the sample studio workspace.
-          </p>
+    <AuthLayout
+      image={img(PHOTOS.loginCoast, 1400)}
+      overlay={
+        <p className="display-title text-4xl leading-snug">
+          Capture
+          <br />
+          Share
+          <br />
+          Grow
+        </p>
+      }
+    >
+      <h1 className="display-title text-3xl">Welcome back</h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">Log in to your account.</p>
 
-          <form onSubmit={submit} className="mt-8 space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="login-email">Email</Label>
-              <Input
-                id="login-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="login-password">Password</Label>
-              <Input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={signingIn}>
-              {signingIn ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-              {signingIn ? "Opening the studio…" : "Sign in"}
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            New here?{" "}
-            <Link to="/signup" className="font-medium text-clay underline-offset-4 hover:underline">
-              Create a demo account
-            </Link>
-          </p>
-        </div>
-      </div>
-
-      <div className="relative hidden lg:block">
-        <img
-          src={photoWide("pixora-login", 1200, 1600)}
-          alt="A quiet studio workspace"
-          className="absolute inset-0 h-full w-full object-cover"
+      <form onSubmit={submit} className="mt-7 space-y-3">
+        <Input
+          type="email"
+          placeholder="Email address"
+          aria-label="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="bg-card"
         />
+        <Input
+          type="password"
+          placeholder="Password"
+          aria-label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="bg-card"
+        />
+        <div className="flex items-center justify-between pt-1 text-xs">
+          <label className="flex items-center gap-2 text-muted-foreground">
+            <Checkbox checked={remember} onCheckedChange={(v) => setRemember(v === true)} />{" "}
+            Remember me
+          </label>
+          <button
+            type="button"
+            onClick={() => toast.info(`Reset link sent to ${email} (demo)`)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Forgot password?
+          </button>
+        </div>
+        <Button type="submit" className="mt-2 w-full" disabled={busy}>
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Log in
+        </Button>
+      </form>
+
+      <div className="mt-5">
+        <SocialButtons onDone={() => navigate({ to: "/dashboard" })} />
       </div>
-    </div>
+
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Don't have an account?{" "}
+        <Link to="/signup" className="font-medium text-foreground underline underline-offset-2">
+          Sign up
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

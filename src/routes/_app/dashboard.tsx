@@ -1,176 +1,162 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
-import {
-  CalendarRange,
-  Camera,
-  DollarSign,
-  Images,
-  Plus,
-  Sparkles,
-  Store,
-  UserPlus,
-} from "lucide-react";
-import { pageHead, PageHeader, SectionCard, StatCard, StatusBadge, Button } from "@/components/kit";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowUp } from "lucide-react";
+import { Avatar, Panel, pageHead } from "@/components/kit";
 import { useDemo } from "@/lib/store";
-import { money, photo, photoWide } from "@/lib/demo-data";
+import { avatar, img, moneyShort } from "@/lib/demo-data";
 
 export const Route = createFileRoute("/_app/dashboard")({
-  head: () => pageHead("Dashboard", "Today at your studio — galleries, sessions and revenue at a glance"),
+  head: () => pageHead("Dashboard", "Here's what's happening with your business today."),
   component: Dashboard,
 });
 
+// Session and invoice revenue booked outside the store this month.
+const BASE_REVENUE = 3485;
+
+function greeting() {
+  const h = new Date().getHours();
+  return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+}
+
 function Dashboard() {
   const { state: demo } = useDemo();
-  const today = new Date().toISOString().slice(0, 10);
+  const paid = demo.orders.filter((o) => o.status === "paid" || o.status === "shipped");
+  const revenue = BASE_REVENUE + paid.reduce((s, o) => s + o.total, 0);
+  const upcoming = demo.sessions.filter((s) => s.status === "confirmed").length;
 
-  const published = demo.galleries.filter((g) => g.status === "published").length;
-  const revenue = demo.invoices.filter((i) => i.status === "paid").reduce((s, i) => s + i.total, 0);
-  const openLeads = demo.leads.filter((l) => l.stage !== "won" && l.stage !== "lost").length;
-  const upcoming = demo.sessions.filter((s) => s.status === "scheduled" && s.date >= today).length;
-  const photoCount = demo.galleries.reduce((n, g) => n + g.photos.length, 0);
-
-  const clientName = (id: string | null) =>
-    demo.clients.find((c) => c.id === id)?.name ?? "Unassigned";
-
-  const recentGalleries = demo.galleries.slice(0, 6);
-  const nextSessions = [...demo.sessions]
-    .filter((s) => s.status === "scheduled" && s.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 3);
+  const stats = [
+    {
+      label: "Total Revenue",
+      value: moneyShort(revenue),
+      sub: (
+        <>
+          <Up /> 12% <span className="text-muted-foreground">from last 30 days</span>
+        </>
+      ),
+      to: "/store/orders",
+    },
+    {
+      label: "Upcoming Sessions",
+      value: upcoming,
+      sub: <span className="text-muted-foreground">Next: 2:00 PM</span>,
+      to: "/studio",
+    },
+    {
+      label: "Pending Invoices",
+      value: 3,
+      sub: <span className="text-muted-foreground">{moneyShort(1240)}</span>,
+      to: "/store/orders",
+    },
+    {
+      label: "New Leads",
+      value: 8,
+      sub: (
+        <>
+          <Up /> 33%
+        </>
+      ),
+      to: "/clients",
+    },
+  ] as const;
 
   return (
     <div className="mx-auto max-w-6xl">
-      <PageHeader
-        eyebrow={new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-        title={`Good to see you, Alex`}
-        description={`Everything happening across ${demo.studioName} today.`}
-        actions={
-          <>
-            <Button asChild variant="outline">
-              <Link to="/studio/leads">
-                <UserPlus className="h-4 w-4" /> Review leads
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to="/galleries/new">
-                <Plus className="h-4 w-4" /> New gallery
-              </Link>
-            </Button>
-          </>
-        }
-      />
+      <h1 className="display-title text-2xl">
+        {greeting()}, {demo.profile.name}
+      </h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Here's what's happening with your business today.
+      </p>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Published galleries" value={published} sub={`${demo.galleries.length} total · ${photoCount} photos`} icon={Images} />
-        <StatCard label="Revenue collected" value={money(revenue)} sub="Paid invoices, all time" icon={DollarSign} />
-        <StatCard label="Open leads" value={openLeads} sub="Waiting on a reply" icon={Sparkles} />
-        <StatCard label="Upcoming sessions" value={upcoming} sub="Scheduled from today" icon={CalendarRange} />
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s) => (
+          <Link
+            key={s.label}
+            to={s.to}
+            className="rounded-lg border bg-card p-4 shadow-soft transition-shadow hover:shadow-lift"
+          >
+            <p className="text-xs text-muted-foreground">{s.label}</p>
+            <p className="mt-1.5 text-2xl font-semibold tracking-tight">{s.value}</p>
+            <p className="mt-1 flex items-center gap-1 text-xs font-medium text-success">{s.sub}</p>
+          </Link>
+        ))}
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <SectionCard
-          title="Recent galleries"
-          description="Latest deliveries and drafts"
-          className="lg:col-span-2"
-          contentClassName="p-4"
-          actions={
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/galleries">View all</Link>
-            </Button>
-          }
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            {recentGalleries.map((g) => (
-              <Link
-                key={g.id}
-                to="/galleries/$id"
-                params={{ id: g.id }}
-                className="group photo-card photo-card-hover block"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_17rem]">
+        <Panel className="p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold">Recent Galleries</h2>
+            <Link to="/galleries" className="text-xs text-muted-foreground hover:text-foreground">
+              View all
+            </Link>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {demo.galleries.slice(0, 3).map((g) => (
+              <Link key={g.id} to="/galleries/$id" params={{ id: g.id }} className="group block">
+                <div className="overflow-hidden rounded-md">
                   <img
-                    src={photoWide(g.coverSeed, 720, 540)}
+                    src={img(g.cover, 480, 360)}
                     alt={g.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <span className="absolute left-2 top-2">
-                    <StatusBadge status={g.status} />
-                  </span>
                 </div>
-                <div className="px-3 py-2.5">
-                  <p className="truncate text-sm font-semibold">{g.title}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {clientName(g.clientId)} · {g.photos.length} photos · {g.views} views
-                  </p>
-                </div>
+                <p className="mt-2 truncate text-xs font-medium">{g.shortTitle}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {g.photoCount} photos · {g.updated}
+                </p>
               </Link>
             ))}
           </div>
-        </SectionCard>
 
-        <div className="flex flex-col gap-6">
-          <SectionCard title="Next sessions" contentClassName="p-0">
-            {nextSessions.length === 0 ? (
-              <p className="px-5 py-6 text-sm text-muted-foreground">No sessions coming up — enjoy the calm.</p>
-            ) : (
-              <ul className="divide-y">
-                {nextSessions.map((s) => (
-                  <li key={s.id} className="flex items-center gap-3 px-5 py-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary">
-                      <Camera className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{s.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {s.date} · {s.time} · {s.location}
-                      </p>
-                    </div>
-                    <StatusBadge status={s.status} />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </SectionCard>
+          <h2 className="mt-6 text-sm font-semibold">Activities</h2>
+          <ul className="mt-2 divide-y">
+            {demo.activity.map((a) => (
+              <li key={a.id} className="flex items-center gap-3 py-2.5">
+                <Avatar src={avatar(a.avatar)} alt="" className="h-7 w-7" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium">{a.title}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">{a.detail}</p>
+                </div>
+                <span className="shrink-0 text-[11px] text-muted-foreground">{a.time}</span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
 
-          <SectionCard
-            title="Latest activity"
-            actions={
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/dashboard/activity">All activity</Link>
-              </Button>
-            }
-            contentClassName="p-4"
-          >
-            <ul className="space-y-3">
-              {demo.activity.slice(0, 5).map((a) => (
-                <li key={a.id} className="flex gap-2.5">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" />
-                  <div className="min-w-0">
-                    <p className="text-xs leading-relaxed">{a.message}</p>
-                    <p className="mt-0.5 text-[10px] text-muted-foreground">{new Date(a.time).toLocaleString()}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </SectionCard>
-
-          <SectionCard title="Quick actions" contentClassName="grid grid-cols-2 gap-2">
-            <Button asChild variant="outline" size="sm" className="justify-start">
-              <Link to="/store"><Store className="h-3.5 w-3.5" /> Store</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="justify-start">
-              <Link to="/clients"><UserPlus className="h-3.5 w-3.5" /> Add client</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="justify-start">
-              <Link to="/website"><Sparkles className="h-3.5 w-3.5" /> Website</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="justify-start">
-              <Link to="/studio/calendar"><CalendarRange className="h-3.5 w-3.5" /> Calendar</Link>
-            </Button>
-          </SectionCard>
-        </div>
+        <Panel className="h-fit p-4">
+          <h2 className="text-sm font-semibold">Activity Feed</h2>
+          <ul className="mt-3 space-y-4">
+            {demo.activity.slice(0, 2).map((a) => (
+              <li key={a.id} className="flex gap-2.5">
+                <Avatar src={avatar(a.avatar)} alt="" className="h-7 w-7" />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium">{a.title}</p>
+                  <p className="text-[11px] text-muted-foreground">{a.time}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-5 border-t pt-4">
+            <p className="text-xs font-medium">Next session</p>
+            {demo.sessions.slice(0, 1).map((s) => (
+              <Link
+                key={s.id}
+                to="/studio/calendar"
+                className="mt-2 block rounded-md bg-info/10 px-3 py-2 text-xs hover:bg-info/15"
+              >
+                <span className="font-medium text-info">{s.title}</span>
+                <span className="block text-[11px] text-muted-foreground">
+                  {s.note} · {s.location}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Panel>
       </div>
     </div>
   );
+}
+
+function Up() {
+  return <ArrowUp className="h-3 w-3" />;
 }
