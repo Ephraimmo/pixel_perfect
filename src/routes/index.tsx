@@ -61,11 +61,7 @@ function Home() {
 
         <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-16 sm:px-6 lg:py-24">
           <h1 className="display-title max-w-xl text-4xl leading-[1.1] text-foreground sm:text-5xl lg:text-[3.6rem]">
-<<<<<<< HEAD
             Everything11111 you need to grow your photography business
-=======
-            Everything you need to grow your photography business
->>>>>>> origin/main
           </h1>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-foreground/70 sm:text-base">
             Client galleries, websites, bookings, store, and more — all in one beautiful platform.

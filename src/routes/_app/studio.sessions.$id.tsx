@@ -32,12 +32,14 @@ import {
   RescheduleDialog,
   SessionFormDialog,
 } from "@/components/studio";
+import { ProjectStatusBadge } from "@/components/projects";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemo } from "@/lib/store";
 import { DEMO_TODAY, formatTime, type Session, type SessionChange } from "@/lib/demo-data";
 import { fromKey } from "@/lib/calendar";
 import { relativeDay } from "@/lib/clients";
 import { SESSION_STATUS_LABELS, durationLabel, sessionIcs, slotLabel } from "@/lib/sessions";
+import { projectOf } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/studio/sessions/$id")({
@@ -73,6 +75,7 @@ function SessionDetails() {
   }
 
   const client = demo.clients.find((c) => c.id === s.clientId);
+  const project = projectOf(demo.projects, { sessionId: s.id });
   const cancelled = s.status === "cancelled";
   const isPast = s.date < DEMO_TODAY;
   const others = demo.sessions
@@ -266,6 +269,21 @@ function SessionDetails() {
         </div>
 
         <aside className="space-y-5">
+          {project ? (
+            <Panel className="p-4">
+              <h2 className="text-sm font-semibold">Project</h2>
+              <Link
+                to="/projects/$id"
+                params={{ id: project.id }}
+                className="mt-2 block rounded-md p-1.5 hover:bg-accent/50"
+              >
+                <span className="block truncate text-sm font-medium">{project.name}</span>
+                <span className="mt-1 block">
+                  <ProjectStatusBadge status={project.status} />
+                </span>
+              </Link>
+            </Panel>
+          ) : null}
           <Panel className="p-4">
             <h2 className="text-sm font-semibold">Client</h2>
             {client ? (

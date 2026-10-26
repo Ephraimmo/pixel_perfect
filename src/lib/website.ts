@@ -5,10 +5,11 @@
 
 import { publishedPosts, seedPosts, type BlogPost } from "./website-blog";
 import { contrastRatio, resolveDesign, type SiteDesign } from "./website-design";
+import { SITE_HOST, publicHost, type DomainSettings } from "./website-domain";
 import { pagePath, seedPages, type SitePage } from "./website-pages";
 import { templateById } from "./website-templates";
 
-export const SITE_HOST = "pixora.site";
+export { SITE_HOST };
 
 /** The parts of the site visitors see. Publishing copies these into `live`. */
 export interface SiteContent {
@@ -46,6 +47,8 @@ export interface WebsiteState extends SiteContent {
   live: SiteContent | null;
   /** Newest first. */
   history: PublishRecord[];
+  /** Custom domain settings. These apply immediately — they aren't published content. */
+  domain: DomainSettings;
 }
 
 export const WEBSITE_VERSION = 1;
@@ -84,6 +87,7 @@ export function seedWebsite(input: { studio: string; templateId: string }): Webs
     publishedTemplateId: input.templateId,
     live: snapshotOf(content),
     history: [{ id: "pub-seed", kind: "published", at, by: "Karabo", changes: ["First publish"] }],
+    domain: { custom: null },
   };
 }
 
@@ -106,8 +110,9 @@ export function siteStatus(s: WebsiteState): SiteStatus {
   return hasUnpublishedChanges(s) ? "changes" : "live";
 }
 
-export function siteUrl(s: Pick<WebsiteState, "subdomain">): string {
-  return `${s.subdomain}.${SITE_HOST}`;
+/** The address visitors use — the custom domain once it's connected and primary. */
+export function siteUrl(s: Pick<WebsiteState, "subdomain"> & { domain?: DomainSettings }): string {
+  return publicHost(s.subdomain, s.domain);
 }
 
 /** Apply a content edit and mark the draft as changed. */

@@ -3,12 +3,15 @@
 // state and is honest about it in the UI.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-<<<<<<< HEAD
 import type { ClientEventKind, ClientNote } from "./crm-data";
 import { invoiceBalance } from "./invoices";
 import type { Lead, LeadStage } from "./leads-data";
 import { matchingClient } from "./leads";
 import { slotLabel } from "./sessions";
+import type { Project, ProjectStatus } from "./projects-data";
+import { PROJECT_STATUS_LABELS } from "./projects";
+import type { Quote, QuoteStatus } from "./quotes-data";
+import { invoiceTotal } from "./invoices";
 import {
   DEMO_TODAY,
   PHOTOS,
@@ -16,11 +19,6 @@ import {
   migrateState,
   money,
   nowStamp,
-=======
-import {
-  PHOTOS,
-  STATE_VERSION,
->>>>>>> origin/main
   seedState,
   type Client,
   type DemoState,
@@ -29,10 +27,7 @@ import {
   type Product,
   type Profile,
   type Session,
-<<<<<<< HEAD
   type SessionChange,
-=======
->>>>>>> origin/main
   type TeamMember,
 } from "./demo-data";
 
@@ -42,19 +37,12 @@ function loadState(): DemoState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-<<<<<<< HEAD
     return migrateState(JSON.parse(raw));
-=======
-    const parsed = JSON.parse(raw) as DemoState;
-    if (parsed.version !== STATE_VERSION || !Array.isArray(parsed.galleries)) return null;
-    return parsed;
->>>>>>> origin/main
   } catch {
     return null;
   }
 }
 
-<<<<<<< HEAD
 export type SessionSlot = Pick<Session, "date" | "start" | "end">;
 export type SessionEdit = Partial<
   Pick<Session, "title" | "clientId" | "kind" | "location" | "notes" | "date" | "start" | "end">
@@ -84,6 +72,49 @@ function changeSession(
     ),
   };
 }
+
+export type NewProjectInput = Pick<
+  Project,
+  "name" | "clientId" | "type" | "startDate" | "dueDate" | "value" | "sessionIds" | "galleryIds"
+> & { tasks: string[] };
+export type ProjectEdit = Partial<
+  Pick<Project, "name" | "startDate" | "dueDate" | "value" | "notes" | "type">
+>;
+
+/** Give sessions/galleries to one project, removing them from any other. */
+function claimForProject(
+  s: DemoState,
+  projectId: string,
+  sessionIds: string[],
+  galleryIds: string[],
+): DemoState {
+  const project = s.projects.find((p) => p.id === projectId);
+  return {
+    ...s,
+    projects: s.projects.map((p) =>
+      p.id === projectId
+        ? {
+            ...p,
+            sessionIds: [...new Set([...p.sessionIds, ...sessionIds])],
+            galleryIds: [...new Set([...p.galleryIds, ...galleryIds])],
+          }
+        : {
+            ...p,
+            sessionIds: p.sessionIds.filter((x) => !sessionIds.includes(x)),
+            galleryIds: p.galleryIds.filter((x) => !galleryIds.includes(x)),
+          },
+    ),
+    // A gallery in a project is delivered to that project's client.
+    galleries: s.galleries.map((g) =>
+      galleryIds.includes(g.id) && project ? { ...g, clientId: project.clientId } : g,
+    ),
+  };
+}
+
+const patchProject = (s: DemoState, id: string, fn: (p: Project) => Partial<Project>) => ({
+  ...s,
+  projects: s.projects.map((p) => (p.id === id ? { ...p, ...fn(p) } : p)),
+});
 
 export type BookingRequestInput = NewLeadInput & { requested: NonNullable<Lead["requested"]> };
 
@@ -127,20 +158,12 @@ export interface DemoStore {
   state: DemoState;
   /** False until saved demo state has been read from localStorage. */
   ready: boolean;
-=======
-const uid = (prefix: string) =>
-  `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-
-export interface DemoStore {
-  state: DemoState;
->>>>>>> origin/main
   resetDemo: () => void;
   updateProfile: (patch: Partial<Profile>) => void;
   createGallery: (title: string) => Gallery;
   updateGallery: (id: string, patch: Partial<Gallery>) => void;
   addPhotos: (id: string, count: number) => void;
   toggleFavorite: (galleryId: string, photoId: string) => void;
-<<<<<<< HEAD
   addClient: (input: NewClientInput) => Client;
   toggleClientStar: (id: string) => void;
   updateClient: (id: string, patch: NewClientInput) => void;
@@ -160,6 +183,27 @@ export interface DemoStore {
   requestBooking: (input: BookingRequestInput) => Lead;
   /** Link the session created for a lead's requested slot. */
   setLeadSession: (leadId: string, sessionId: string) => void;
+  /** Create or update a quote (matched by id). */
+  saveQuote: (quote: Quote) => void;
+  /** Send, revise (back to draft) or record the client's answer. */
+  setQuoteStatus: (id: string, status: QuoteStatus) => void;
+  deleteQuote: (id: string) => void;
+  restoreQuote: (quote: Quote) => void;
+  addProject: (input: NewProjectInput) => Project;
+  updateProject: (id: string, patch: ProjectEdit) => void;
+  setProjectStatus: (id: string, status: ProjectStatus) => void;
+  archiveProject: (id: string, archived: boolean) => void;
+  deleteProject: (id: string) => void;
+  restoreProject: (project: Project) => void;
+  addProjectTask: (projectId: string, title: string) => void;
+  toggleProjectTask: (projectId: string, taskId: string) => void;
+  removeProjectTask: (projectId: string, taskId: string) => void;
+  /** Link (or unlink) a session or gallery; an item belongs to one project at most. */
+  linkToProject: (
+    projectId: string,
+    item: { sessionId: string } | { galleryId: string },
+    linked: boolean,
+  ) => void;
   restoreLead: (lead: Lead) => void;
   addSession: (input: Omit<Session, "id" | "color" | "status">) => Session;
   /** Edit details; a changed date or time is recorded as a reschedule. */
@@ -168,12 +212,6 @@ export interface DemoStore {
   updateSessionStatus: (id: string, status: "pending" | "confirmed" | "completed") => void;
   cancelSession: (id: string, reason: string, notifyClient: boolean) => void;
   reinstateSession: (id: string) => void;
-=======
-  addClient: (input: { name: string; email: string }) => void;
-  toggleClientStar: (id: string) => void;
-  addSession: (input: Omit<Session, "id" | "color" | "status">) => void;
-  updateSessionStatus: (id: string, status: Session["status"]) => void;
->>>>>>> origin/main
   addProduct: (input: Pick<Product, "name" | "category" | "price">) => void;
   toggleProduct: (id: string) => void;
   updateOrderStatus: (id: string, status: Order["status"]) => void;
@@ -220,10 +258,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
     return {
       state,
-<<<<<<< HEAD
       ready,
-=======
->>>>>>> origin/main
       resetDemo: () => setState(seedState()),
       updateProfile: (patch) => setState((s) => ({ ...s, profile: { ...s.profile, ...patch } })),
       createGallery: (title) => {
@@ -268,7 +303,6 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             ? g.favorites.filter((p) => p !== photoId)
             : [...g.favorites, photoId],
         })),
-<<<<<<< HEAD
       addClient: (input) => {
         const client: Client = {
           ...input,
@@ -480,6 +514,136 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           ...s,
           leads: s.leads.map((l) => (l.id === leadId ? { ...l, sessionId } : l)),
         })),
+      saveQuote: (quote) =>
+        setState((s) => ({
+          ...s,
+          quotes: s.quotes.some((q) => q.id === quote.id)
+            ? s.quotes.map((q) => (q.id === quote.id ? quote : q))
+            : [quote, ...s.quotes],
+        })),
+      setQuoteStatus: (id, status) =>
+        setState((s) => {
+          const q = s.quotes.find((x) => x.id === id);
+          if (!q || q.status === status) return s;
+          const answered = status === "accepted" || status === "declined";
+          let next: DemoState = {
+            ...s,
+            quotes: s.quotes.map((x) =>
+              x.id === id ? { ...x, status, respondedAt: answered ? DEMO_TODAY : undefined } : x,
+            ),
+          };
+          const label = `Quote ${q.number}`;
+          const detail = `${q.title} · ${money(invoiceTotal(q))}`;
+          if (q.clientId) {
+            if (status === "sent")
+              next = withEvent(next, q.clientId, "email", `${label} sent`, detail);
+            if (answered)
+              next = withEvent(next, q.clientId, "update", `${label} ${status}`, detail);
+          }
+          // Sending a proposal to an open lead moves it along the pipeline.
+          if (q.leadId && status === "sent") {
+            next = {
+              ...next,
+              leads: next.leads.map((l) =>
+                l.id === q.leadId && ["new", "contacted", "consultation"].includes(l.stage)
+                  ? {
+                      ...l,
+                      stage: "proposal" as const,
+                      history: [...l.history, { stage: "proposal" as const, at: nowStamp() }],
+                    }
+                  : l,
+              ),
+            };
+          }
+          return next;
+        }),
+      deleteQuote: (id) => setState((s) => ({ ...s, quotes: s.quotes.filter((q) => q.id !== id) })),
+      restoreQuote: (quote) =>
+        setState((s) =>
+          s.quotes.some((q) => q.id === quote.id) ? s : { ...s, quotes: [quote, ...s.quotes] },
+        ),
+      addProject: ({ tasks, sessionIds, galleryIds, ...input }) => {
+        const id = uid("pr");
+        const project: Project = {
+          ...input,
+          id,
+          status: "planning",
+          sessionIds: [],
+          galleryIds: [],
+          tasks: tasks.map((title, i) => ({ id: `${id}-t${i + 1}`, title, done: false })),
+          notes: "",
+          archived: false,
+          createdAt: DEMO_TODAY,
+        };
+        setState((s) =>
+          withEvent(
+            claimForProject(
+              { ...s, projects: [project, ...s.projects] },
+              id,
+              sessionIds,
+              galleryIds,
+            ),
+            input.clientId,
+            "update",
+            "Project created",
+            input.name,
+          ),
+        );
+        return project;
+      },
+      updateProject: (id, patch) => setState((s) => patchProject(s, id, () => patch)),
+      setProjectStatus: (id, status) =>
+        setState((s) => {
+          const p = s.projects.find((x) => x.id === id);
+          if (!p || p.status === status) return s;
+          return withEvent(
+            patchProject(s, id, () => ({ status })),
+            p.clientId,
+            "update",
+            `Project moved to ${PROJECT_STATUS_LABELS[status]}`,
+            p.name,
+          );
+        }),
+      archiveProject: (id, archived) => setState((s) => patchProject(s, id, () => ({ archived }))),
+      deleteProject: (id) =>
+        setState((s) => ({ ...s, projects: s.projects.filter((p) => p.id !== id) })),
+      restoreProject: (project) =>
+        setState((s) =>
+          s.projects.some((p) => p.id === project.id)
+            ? s
+            : claimForProject(
+                { ...s, projects: [project, ...s.projects] },
+                project.id,
+                project.sessionIds,
+                project.galleryIds,
+              ),
+        ),
+      addProjectTask: (projectId, title) =>
+        setState((s) =>
+          patchProject(s, projectId, (p) => ({
+            tasks: [...p.tasks, { id: uid("t"), title, done: false }],
+          })),
+        ),
+      toggleProjectTask: (projectId, taskId) =>
+        setState((s) =>
+          patchProject(s, projectId, (p) => ({
+            tasks: p.tasks.map((t) => (t.id === taskId ? { ...t, done: !t.done } : t)),
+          })),
+        ),
+      removeProjectTask: (projectId, taskId) =>
+        setState((s) =>
+          patchProject(s, projectId, (p) => ({ tasks: p.tasks.filter((t) => t.id !== taskId) })),
+        ),
+      linkToProject: (projectId, item, linked) =>
+        setState((s) => {
+          const sessionIds = "sessionId" in item ? [item.sessionId] : [];
+          const galleryIds = "galleryId" in item ? [item.galleryId] : [];
+          if (linked) return claimForProject(s, projectId, sessionIds, galleryIds);
+          return patchProject(s, projectId, (p) => ({
+            sessionIds: p.sessionIds.filter((x) => !sessionIds.includes(x)),
+            galleryIds: p.galleryIds.filter((x) => !galleryIds.includes(x)),
+          }));
+        }),
       deleteLead: (id) => setState((s) => ({ ...s, leads: s.leads.filter((l) => l.id !== id) })),
       restoreLead: (lead) =>
         setState((s) =>
@@ -587,33 +751,6 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             "Back on the calendar as pending",
           ),
         ),
-=======
-      addClient: ({ name, email }) =>
-        setState((s) => ({
-          ...s,
-          clients: [
-            {
-              id: uid("c"),
-              name,
-              email,
-              avatar: PHOTOS.avatars.olivia,
-              sessions: 0,
-              starred: false,
-            } satisfies Client,
-            ...s.clients,
-          ],
-        })),
-      toggleClientStar: (id) => patchList("clients", id, (c) => ({ starred: !c.starred })),
-      addSession: (input) =>
-        setState((s) => ({
-          ...s,
-          sessions: [...s.sessions, { ...input, id: uid("s"), status: "pending", color: "violet" }],
-          clients: s.clients.map((c) =>
-            c.id === input.clientId ? { ...c, sessions: c.sessions + 1 } : c,
-          ),
-        })),
-      updateSessionStatus: (id, status) => patchList("sessions", id, () => ({ status })),
->>>>>>> origin/main
       addProduct: (input) =>
         setState((s) => ({
           ...s,
@@ -636,11 +773,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         patchList("integrations", id, (i) => ({ connected: !i.connected })),
       publishTemplate: (id) => setState((s) => ({ ...s, publishedTemplate: id })),
     };
-<<<<<<< HEAD
   }, [state, ready]);
-=======
-  }, [state]);
->>>>>>> origin/main
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }

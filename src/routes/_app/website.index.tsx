@@ -147,6 +147,18 @@ function WebsiteOverview() {
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted-foreground">Custom domain</dt>
+                <dd>
+                  <Link to="/website/domain" className="font-medium hover:underline">
+                    {site.domain.custom
+                      ? `${site.domain.custom.hostname} · ${
+                          site.domain.custom.status === "connected" ? "connected" : "setting up"
+                        }`
+                      : "Connect a domain"}
+                  </Link>
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-3">
                 <dt className="text-muted-foreground">Last published</dt>
                 <dd>{publishedLabel(site.lastPublishedAt, now)}</dd>
               </div>

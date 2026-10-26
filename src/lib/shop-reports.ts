@@ -29,14 +29,25 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export function validateReportSearch(raw: Record<string, unknown>): ReportSearch {
   const from = raw["from"];
   const to = raw["to"];
-  if (typeof from === "string" && typeof to === "string" && DATE_RE.test(from) && DATE_RE.test(to) && from <= to)
+  if (
+    typeof from === "string" &&
+    typeof to === "string" &&
+    DATE_RE.test(from) &&
+    DATE_RE.test(to) &&
+    from <= to
+  )
     return { from, to };
   const days = Number(raw["days"]);
-  return RANGE_PRESETS.includes(days as RangePreset) && days !== 30 ? { days: days as RangePreset } : {};
+  return RANGE_PRESETS.includes(days as RangePreset) && days !== 30
+    ? { days: days as RangePreset }
+    : {};
 }
 
 export function daysInRange(r: DateRange): number {
-  return Math.round((Date.parse(`${r.to}T00:00:00Z`) - Date.parse(`${r.from}T00:00:00Z`)) / 86_400_000) + 1;
+  return (
+    Math.round((Date.parse(`${r.to}T00:00:00Z`) - Date.parse(`${r.from}T00:00:00Z`)) / 86_400_000) +
+    1
+  );
 }
 
 /** The selected range and the equal-length period just before it. */
@@ -71,7 +82,8 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export function salesReport(orders: ShopOrder[], range: DateRange): SalesReport {
   const inPeriod = orders.filter((o) => inRange(o.date, range));
   const paid = inPeriod.filter(isPaid);
-  const sum = (f: (o: ShopOrder) => number, list = paid) => round2(list.reduce((s, o) => s + f(o), 0));
+  const sum = (f: (o: ShopOrder) => number, list = paid) =>
+    round2(list.reduce((s, o) => s + f(o), 0));
   const net = sum((o) => o.total);
   const awaiting = inPeriod.filter((o) => o.status === "pending");
   return {
@@ -111,7 +123,10 @@ export function salesByCategory(
   range: DateRange,
 ): CategorySales[] {
   const rows = new Map<ProductCategory, CategorySales>(
-    (["print", "digital", "package"] as ProductCategory[]).map((c) => [c, { category: c, revenue: 0, units: 0 }]),
+    (["print", "digital", "package"] as ProductCategory[]).map((c) => [
+      c,
+      { category: c, revenue: 0, units: 0 },
+    ]),
   );
   for (const o of orders) {
     if (!isPaid(o) || !inRange(o.date, range)) continue;
@@ -149,11 +164,19 @@ export function productReport(
   previous: DateRange,
 ): ProductRow[] {
   const tally = (range: DateRange) => {
-    const out = new Map<string, { name: string; units: number; orders: Set<string>; revenue: number }>();
+    const out = new Map<
+      string,
+      { name: string; units: number; orders: Set<string>; revenue: number }
+    >();
     for (const o of orders) {
       if (!isPaid(o) || !inRange(o.date, range)) continue;
       for (const i of o.items) {
-        const row = out.get(i.productId) ?? { name: i.name, units: 0, orders: new Set<string>(), revenue: 0 };
+        const row = out.get(i.productId) ?? {
+          name: i.name,
+          units: 0,
+          orders: new Set<string>(),
+          revenue: 0,
+        };
         row.units += i.quantity;
         row.orders.add(o.id);
         row.revenue = round2(row.revenue + i.quantity * i.unitPrice);
@@ -164,7 +187,11 @@ export function productReport(
   };
   const now = tally(current);
   const before = tally(previous);
-  const ids = new Set([...now.keys(), ...before.keys(), ...products.filter((p) => p.active).map((p) => p.id)]);
+  const ids = new Set([
+    ...now.keys(),
+    ...before.keys(),
+    ...products.filter((p) => p.active).map((p) => p.id),
+  ]);
   const total = [...now.values()].reduce((s, r) => s + r.revenue, 0);
   return [...ids]
     .map((id) => {
@@ -187,7 +214,11 @@ export function productReport(
     .sort((a, b) => b.revenue - a.revenue || a.name.localeCompare(b.name));
 }
 
-export function sortProductRows(rows: ProductRow[], key: ProductSortKey, dir: "asc" | "desc"): ProductRow[] {
+export function sortProductRows(
+  rows: ProductRow[],
+  key: ProductSortKey,
+  dir: "asc" | "desc",
+): ProductRow[] {
   const sign = dir === "asc" ? 1 : -1;
   const value = (r: ProductRow) => (key === "change" ? (r.change ?? -Infinity) : r[key]);
   return [...rows].sort((a, b) => {
@@ -207,19 +238,32 @@ export interface CouponRow {
 }
 
 /** Paid orders that used a coupon in the range, per code. */
-export function couponReport(orders: ShopOrder[], coupons: Coupon[], range: DateRange): CouponRow[] {
+export function couponReport(
+  orders: ShopOrder[],
+  coupons: Coupon[],
+  range: DateRange,
+): CouponRow[] {
   const rows = new Map<string, CouponRow>();
   for (const o of orders) {
     if (!o.couponCode || !isPaid(o) || !inRange(o.date, range)) continue;
-    const row = rows.get(o.couponCode) ?? { code: o.couponCode, redemptions: 0, discount: 0, revenue: 0 };
+    const row = rows.get(o.couponCode) ?? {
+      code: o.couponCode,
+      redemptions: 0,
+      discount: 0,
+      revenue: 0,
+    };
     row.redemptions += 1;
     row.discount = round2(row.discount + o.discount);
     row.revenue = round2(row.revenue + o.total);
     rows.set(o.couponCode, row);
   }
   // Keep codes the studio has even if unused in the range, so the table answers "did it work?".
-  for (const c of coupons) if (!rows.has(c.code)) rows.set(c.code, { code: c.code, redemptions: 0, discount: 0, revenue: 0 });
-  return [...rows.values()].sort((a, b) => b.redemptions - a.redemptions || a.code.localeCompare(b.code));
+  for (const c of coupons)
+    if (!rows.has(c.code))
+      rows.set(c.code, { code: c.code, redemptions: 0, discount: 0, revenue: 0 });
+  return [...rows.values()].sort(
+    (a, b) => b.redemptions - a.redemptions || a.code.localeCompare(b.code),
+  );
 }
 
 export function productReportCsv(rows: ProductRow[], range: DateRange): string {
@@ -227,7 +271,16 @@ export function productReportCsv(rows: ProductRow[], range: DateRange): string {
     const s = String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  const header = ["Product", "Type", "Units", "Orders", "Revenue", "Share %", "Previous revenue", "Change %"];
+  const header = [
+    "Product",
+    "Type",
+    "Units",
+    "Orders",
+    "Revenue",
+    "Share %",
+    "Previous revenue",
+    "Change %",
+  ];
   const lines = rows.map((r) => [
     r.name,
     r.category ?? "",
@@ -238,5 +291,9 @@ export function productReportCsv(rows: ProductRow[], range: DateRange): string {
     r.previousRevenue.toFixed(2),
     r.change === null ? "" : r.change.toFixed(1),
   ]);
-  return [`# ${range.from} to ${range.to}`, header.join(","), ...lines.map((l) => l.map(cell).join(","))].join("\n");
+  return [
+    `# ${range.from} to ${range.to}`,
+    header.join(","),
+    ...lines.map((l) => l.map(cell).join(",")),
+  ].join("\n");
 }

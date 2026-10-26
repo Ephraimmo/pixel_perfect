@@ -14,18 +14,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar } from "@/components/kit";
 import { useDemo } from "@/lib/store";
-<<<<<<< HEAD
 import { useShop } from "@/lib/shop";
-=======
->>>>>>> origin/main
 import { avatar } from "@/lib/demo-data";
 
 function SearchBox() {
   const { state: demo } = useDemo();
-<<<<<<< HEAD
   const { state: shop } = useShop();
-=======
->>>>>>> origin/main
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
@@ -46,25 +40,15 @@ function SearchBox() {
             key: c.id,
             label: c.name,
             kind: "Client",
-<<<<<<< HEAD
             go: () => navigate({ to: "/clients", search: { q: c.name } }),
           })),
         ...shop.products
-=======
-            go: () => navigate({ to: "/clients" }),
-          })),
-        ...demo.products
->>>>>>> origin/main
           .filter((p) => p.name.toLowerCase().includes(q))
           .map((p) => ({
             key: p.id,
             label: p.name,
             kind: "Product",
-<<<<<<< HEAD
             go: () => navigate({ to: "/store/products/$id", params: { id: p.id } }),
-=======
-            go: () => navigate({ to: "/store" }),
->>>>>>> origin/main
           })),
       ].slice(0, 8)
     : [];
@@ -146,10 +130,7 @@ function Notifications() {
 
 export function Topbar() {
   const { state: demo, resetDemo } = useDemo();
-<<<<<<< HEAD
   const { resetShop } = useShop();
-=======
->>>>>>> origin/main
   const navigate = useNavigate();
 
   return (
@@ -183,10 +164,7 @@ export function Topbar() {
             <DropdownMenuItem
               onSelect={() => {
                 resetDemo();
-<<<<<<< HEAD
                 resetShop();
-=======
->>>>>>> origin/main
                 toast.success("Demo data reset");
               }}
             >

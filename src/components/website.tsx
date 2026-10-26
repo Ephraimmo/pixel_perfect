@@ -14,7 +14,11 @@ import { cn } from "@/lib/utils";
  * layout's intrinsic width inside the sidebar's flex container.
  */
 export function ScrollRow({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("w-0 min-w-full overflow-x-auto", className)}>{children}</div>;
+  return (
+    <div className={cn("w-0 min-w-full overflow-x-auto overflow-y-hidden", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function WebsiteTabs() {
@@ -30,6 +34,7 @@ export function WebsiteTabs() {
             { to: "/website/portfolio", label: "Portfolio" },
             { to: "/website/blog", label: "Blog" },
             { to: "/website/preview", label: "Preview" },
+            { to: "/website/domain", label: "Domain" },
           ]}
         />
       </div>

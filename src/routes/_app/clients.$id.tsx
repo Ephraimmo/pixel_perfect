@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ComponentType, type ReactNode } from "react";
 import { format } from "date-fns";
 import {
@@ -36,6 +36,7 @@ import {
   pageHead,
 } from "@/components/kit";
 import { ClientFormDialog } from "@/components/clients";
+import { NewProjectButton, ProjectCard } from "@/components/projects";
 import { AddSessionDialog } from "@/components/studio";
 import {
   DropdownMenu,
@@ -82,8 +83,8 @@ import {
 } from "@/lib/invoices";
 import { cn } from "@/lib/utils";
 
-type Tab = "activity" | "sessions" | "galleries" | "invoices" | "notes";
-const TABS: Tab[] = ["activity", "sessions", "galleries", "invoices", "notes"];
+type Tab = "activity" | "projects" | "sessions" | "galleries" | "invoices" | "notes";
+const TABS: Tab[] = ["activity", "projects", "sessions", "galleries", "invoices", "notes"];
 
 export const Route = createFileRoute("/_app/clients/$id")({
   head: () => pageHead("Client", "Contact details, sessions, galleries, invoices and notes."),
@@ -258,6 +259,10 @@ function ClientProfile() {
             }
             tabs={[
               { value: "activity", label: "Activity" },
+              {
+                value: "projects",
+                label: `Projects (${demo.projects.filter((p) => p.clientId === client.id).length})`,
+              },
               { value: "sessions", label: `Sessions (${sessions.length})` },
               { value: "galleries", label: `Galleries (${galleries.length})` },
               { value: "invoices", label: `Invoices (${invoices.length})` },
@@ -267,6 +272,8 @@ function ClientProfile() {
           <div className="mt-4" role="tabpanel">
             {tab === "activity" ? (
               <ActivityTab entries={clientTimeline(client, demo.clientEvents)} />
+            ) : tab === "projects" ? (
+              <ProjectsTab clientId={client.id} />
             ) : tab === "sessions" ? (
               <SessionsTab clientId={client.id} />
             ) : tab === "galleries" ? (
@@ -419,6 +426,40 @@ function ActivityTab({ entries }: { entries: TimelineEntry[] }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+function ProjectsTab({ clientId }: { clientId: string }) {
+  const { state: demo } = useDemo();
+  const goTo = useNavigate();
+  const projects = demo.projects
+    .filter((p) => p.clientId === clientId)
+    .sort(
+      (a, b) => Number(a.archived) - Number(b.archived) || b.startDate.localeCompare(a.startDate),
+    );
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <NewProjectButton
+          defaultClientId={clientId}
+          onSaved={(p) => void goTo({ to: "/projects/$id", params: { id: p.id } })}
+        />
+      </div>
+      {projects.length === 0 ? (
+        <EmptyState
+          title="No projects yet"
+          description="Start a project to group this client's sessions, galleries, invoices and to-dos."
+        />
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {projects.map((p) => (
+            <li key={p.id}>
+              <ProjectCard project={p} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
