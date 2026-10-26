@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Button, PageHeader, Panel, pageHead } from "@/components/kit";
@@ -40,6 +40,11 @@ function Reports() {
   const { current, previous, days, custom } = resolveRange(search);
   const [from, setFrom] = useState(current.from);
   const [to, setTo] = useState(current.to);
+  // Keep the date fields on the active range when a preset or the URL changes it.
+  useEffect(() => {
+    setFrom(current.from);
+    setTo(current.to);
+  }, [current.from, current.to]);
   const [sort, setSort] = useState<{ key: ProductSortKey; dir: "asc" | "desc" }>({
     key: "revenue",
     dir: "desc",
@@ -69,7 +74,12 @@ function Reports() {
   };
 
   const sortBy = (key: ProductSortKey) =>
-    setSort((s) => ({ key, dir: s.key === key && s.dir === "desc" ? "asc" : "desc" }));
+    // Names start A–Z; numbers start highest first. A second click flips the direction.
+    setSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === "desc" ? "asc" : "desc" }
+        : { key, dir: key === "name" ? "asc" : "desc" },
+    );
 
   const exportCsv = () => {
     const blob = new Blob([productReportCsv(products, current)], {
@@ -181,6 +191,7 @@ function Reports() {
           value={money(now.discounts)}
           change={change.discounts}
           caption={vs}
+          noComparison="No discounts in the previous period"
         />
         <div className="rounded-lg border bg-card p-4 shadow-soft">
           <p className="text-xs text-muted-foreground">Awaiting payment</p>

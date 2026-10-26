@@ -13,11 +13,14 @@ export function StatTile({
   value,
   change,
   caption,
+  noComparison = "No prior sales to compare",
 }: {
   label: string;
   value: string;
   change: number | null;
   caption: string;
+  /** Shown instead of a change when the previous period had nothing. */
+  noComparison?: string;
 }) {
   const up = change !== null && change >= 0;
   return (
@@ -26,7 +29,7 @@ export function StatTile({
       <p className="mt-1.5 text-2xl font-semibold tracking-tight">{value}</p>
       <p className="mt-1 flex items-center gap-1 text-xs">
         {change === null ? (
-          <span className="text-muted-foreground">No prior sales to compare</span>
+          <span className="text-muted-foreground">{noComparison}</span>
         ) : (
           <>
             <span
