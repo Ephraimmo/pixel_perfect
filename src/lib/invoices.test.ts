@@ -3,7 +3,17 @@ import { describe, expect, it } from "vitest";
 import { DEMO_TODAY, seedState } from "@/lib/demo-data";
 import type { Invoice } from "@/lib/crm-data";
 import {
+  addDaysIso,
+  applyPayment,
+  countInvoices,
+  daysOverdue,
+  filterInvoices,
   invoiceBalance,
+  invoiceStats,
+  nextInvoiceNumber,
+  validateInvoice,
+  validateInvoiceSearch,
+  validatePayment,
   invoiceDiscount,
   invoiceDisplayStatus,
   invoiceSubtotal,
@@ -52,10 +62,16 @@ describe("invoice math", () => {
     expect(invoiceTotal(byNumber("INV-1047"))).toBe(305.33);
   });
 
-  it("keeps the dashboard's pending total of $1,240 across three invoices", () => {
+  it("adds up the outstanding balances the dashboard shows", () => {
     const pending = invoices.filter((i) => invoiceBalance(i) > 0);
-    expect(pending).toHaveLength(3);
-    expect(pending.reduce((s, i) => s + invoiceBalance(i), 0)).toBe(1240);
+    expect(pending.map((i) => i.number).sort()).toEqual([
+      "INV-1043",
+      "INV-1044",
+      "INV-1045",
+      "INV-1048",
+    ]);
+    // 450 + 560 + 230 + (966 − 300 deposit)
+    expect(pending.reduce((s, i) => s + invoiceBalance(i), 0)).toBe(1906);
   });
 });
 
@@ -75,5 +91,97 @@ describe("invoiceDisplayStatus", () => {
     expect(invoiceDisplayStatus({ ...base, status: "partial" }, DEMO_TODAY)).toBe("overdue");
     expect(invoiceDisplayStatus({ ...base, status: "paid" }, DEMO_TODAY)).toBe("paid");
     expect(invoiceDisplayStatus({ ...base, status: "draft" }, DEMO_TODAY)).toBe("draft");
+  });
+});
+
+describe("payments", () => {
+  const sent: Invoice = {
+    ...base,
+    taxRate: 0,
+    discount: { kind: "amount", value: 0 },
+    payments: [],
+  };
+  // total 237.49
+
+  it("moves sent → partial → paid and keeps a history", () => {
+    const part = applyPayment(sent, {
+      id: "p1",
+      amount: 100,
+      date: "2025-04-18",
+      method: "eft",
+      note: "",
+    });
+    expect(part).toMatchObject({ status: "partial", amountPaid: 100 });
+    expect(invoiceBalance(part)).toBe(137.49);
+    const full = applyPayment(part, {
+      id: "p2",
+      amount: 137.49,
+      date: "2025-04-20",
+      method: "card",
+      note: "",
+    });
+    expect(full).toMatchObject({ status: "paid", amountPaid: 237.49, paidDate: "2025-04-20" });
+    expect(full.payments).toHaveLength(2);
+  });
+
+  it("refuses zero, negative and overpayments", () => {
+    expect(validatePayment(0, sent)).toBeDefined();
+    expect(validatePayment(-5, sent)).toBeDefined();
+    expect(validatePayment(237.5, sent)).toMatch(/more than the \$237.49/);
+    expect(validatePayment(237.49, sent)).toBeUndefined();
+    expect(validatePayment(Number.NaN, sent)).toBeDefined();
+  });
+});
+
+describe("list and stats", () => {
+  const today = DEMO_TODAY;
+  const name = () => "";
+
+  it("counts tabs, with overdue split from outstanding", () => {
+    expect(countInvoices(invoices, today)).toEqual({
+      all: 12,
+      draft: 1,
+      outstanding: 3,
+      overdue: 1,
+      paid: 6,
+      void: 1,
+    });
+  });
+
+  it("puts overdue invoices first, then newest", () => {
+    const rows = filterInvoices(invoices, name, {}, today);
+    expect(rows[0]?.number).toBe("INV-1044");
+    expect(rows[1]?.number).toBe("INV-1047");
+    expect(filterInvoices(invoices, name, { q: "canvas" }, today).map((i) => i.number)).toEqual([
+      "INV-1047",
+    ]);
+    expect(filterInvoices(invoices, name, { tab: "void" }, today).map((i) => i.number)).toEqual([
+      "INV-1037",
+    ]);
+  });
+
+  it("summarises money for the page and dashboard", () => {
+    expect(invoiceStats(invoices, today)).toEqual({
+      outstandingCount: 4,
+      outstanding: 1906,
+      overdueCount: 1,
+      overdue: 560,
+      paidLast30: 1500, // 1,200 (INV-1042) + 300 deposit (INV-1048)
+    });
+    expect(daysOverdue(byNumber("INV-1044"), today)).toBe(6);
+    expect(daysOverdue(byNumber("INV-1043"), today)).toBe(0);
+  });
+
+  it("numbers, dates and search params", () => {
+    expect(nextInvoiceNumber(invoices)).toBe("INV-1049");
+    expect(addDaysIso("2025-04-20", 14)).toBe("2025-05-04");
+    expect(validateInvoiceSearch({ tab: "overdue", q: "x" })).toEqual({ tab: "overdue", q: "x" });
+    expect(validateInvoiceSearch({ tab: "late" })).toEqual({});
+  });
+
+  it("validates the editor", () => {
+    expect(validateInvoice(base)).toEqual({});
+    const e = validateInvoice({ ...base, clientId: "", dueDate: "2025-03-01", items: [] });
+    expect(Object.keys(e).sort()).toEqual(["clientId", "dueDate", "items"]);
   });
 });

@@ -31,6 +31,8 @@ import {
   dueLabel,
 } from "@/components/projects";
 import { KindLabel, SessionFormDialog } from "@/components/studio";
+import { QuoteStatusBadge } from "@/components/quotes";
+import { ContractStatusBadge, NewContractDialog, SignatureProgress } from "@/components/contracts";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -243,7 +245,9 @@ function ProjectDetails() {
           <TasksPanel project={p} progress={progress} />
           <SessionsPanel project={p} />
           <GalleriesPanel project={p} />
-          <InvoicesPanel invoices={totals.invoices} />
+          <QuotesPanel project={p} />
+          <ContractsPanel project={p} />
+          <InvoicesPanel invoices={totals.invoices} projectId={p.id} />
         </div>
         <aside className="space-y-5">
           <NotesPanel project={p} />
@@ -597,10 +601,105 @@ function GalleriesPanel({ project: p }: { project: Project }) {
   );
 }
 
-function InvoicesPanel({ invoices }: { invoices: ReturnType<typeof projectMoney>["invoices"] }) {
+function ContractsPanel({ project: p }: { project: Project }) {
+  const { state: demo } = useDemo();
+  const contracts = demo.contracts.filter((c) => c.projectId === p.id);
   return (
     <Panel className="p-4">
-      <SectionHeader title={`Invoices (${invoices.length})`} />
+      <SectionHeader title={`Contracts (${contracts.length})`}>
+        <NewContractDialog
+          defaultClientId={p.clientId}
+          defaultProjectId={p.id}
+          trigger={
+            <Button size="sm" variant="outline" className="h-8 bg-card text-xs">
+              <Plus /> New contract
+            </Button>
+          }
+        />
+      </SectionHeader>
+      {contracts.length === 0 ? (
+        <p className="mt-3 rounded-md border border-dashed p-4 text-center text-xs text-muted-foreground">
+          No contract for this project yet.
+        </p>
+      ) : (
+        <ul className="mt-3 divide-y rounded-md border">
+          {contracts.map((c) => (
+            <li key={c.id}>
+              <Link
+                to="/contracts/$id"
+                params={{ id: c.id }}
+                className="flex items-center gap-3 px-3 py-2.5 hover:bg-accent/40"
+              >
+                <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 flex-1 truncate text-sm font-medium">{c.title}</span>
+                <SignatureProgress contract={c} />
+                <ContractStatusBadge status={c.status} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+function QuotesPanel({ project: p }: { project: Project }) {
+  const { state: demo } = useDemo();
+  const quotes = demo.quotes.filter((q) => q.projectId === p.id);
+  return (
+    <Panel className="p-4">
+      <SectionHeader title={`Quotes (${quotes.length})`}>
+        <Button asChild size="sm" variant="outline" className="h-8 bg-card text-xs">
+          <Link to="/quotes/new" search={{ project: p.id }}>
+            <Plus /> New quote
+          </Link>
+        </Button>
+      </SectionHeader>
+      {quotes.length === 0 ? (
+        <p className="mt-3 rounded-md border border-dashed p-4 text-center text-xs text-muted-foreground">
+          No quotes for this project yet.
+        </p>
+      ) : (
+        <ul className="mt-3 divide-y rounded-md border">
+          {quotes.map((q) => (
+            <li key={q.id}>
+              <Link
+                to="/quotes/$id"
+                params={{ id: q.id }}
+                className="flex items-center gap-3 px-3 py-2.5 hover:bg-accent/40"
+              >
+                <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium">{q.number}</span>
+                  <span className="block truncate text-xs text-muted-foreground">{q.title}</span>
+                </span>
+                <QuoteStatusBadge quote={q} />
+                <span className="text-sm font-semibold tabular-nums">{money(invoiceTotal(q))}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+function InvoicesPanel({
+  invoices,
+  projectId,
+}: {
+  invoices: ReturnType<typeof projectMoney>["invoices"];
+  projectId: string;
+}) {
+  return (
+    <Panel className="p-4">
+      <SectionHeader title={`Invoices (${invoices.length})`}>
+        <Button asChild size="sm" variant="outline" className="h-8 bg-card text-xs">
+          <Link to="/invoices/new" search={{ project: projectId }}>
+            <Plus /> New invoice
+          </Link>
+        </Button>
+      </SectionHeader>
       {invoices.length === 0 ? (
         <p className="mt-3 rounded-md border border-dashed p-4 text-center text-xs text-muted-foreground">
           No invoices linked to this project yet.
@@ -613,7 +712,13 @@ function InvoicesPanel({ invoices }: { invoices: ReturnType<typeof projectMoney>
               <li key={inv.id} className="flex items-center gap-3 px-3 py-2.5">
                 <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium">{inv.number}</span>
+                  <Link
+                    to="/invoices/$id"
+                    params={{ id: inv.id }}
+                    className="block text-sm font-medium hover:underline"
+                  >
+                    {inv.number}
+                  </Link>
                   <span className="block truncate text-xs text-muted-foreground">
                     {inv.items[0]?.description} · due {formatDate(inv.dueDate)}
                   </span>

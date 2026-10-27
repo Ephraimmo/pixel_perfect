@@ -4,6 +4,7 @@ import { Avatar, Panel, pageHead } from "@/components/kit";
 import { useDemo } from "@/lib/store";
 import { DEMO_TODAY, avatar, img, moneyShort } from "@/lib/demo-data";
 import { leadTrend } from "@/lib/leads";
+import { invoiceStats } from "@/lib/invoices";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => pageHead("Dashboard", "Here's what's happening with your business today."),
@@ -24,6 +25,7 @@ function Dashboard() {
   const revenue = BASE_REVENUE + paid.reduce((s, o) => s + o.total, 0);
   const upcoming = demo.sessions.filter((s) => s.status === "confirmed").length;
   const leads = leadTrend(demo.leads, DEMO_TODAY);
+  const invoices = invoiceStats(demo.invoices, DEMO_TODAY);
 
   const stats = [
     {
@@ -44,9 +46,14 @@ function Dashboard() {
     },
     {
       label: "Pending Invoices",
-      value: 3,
-      sub: <span className="text-muted-foreground">{moneyShort(1240)}</span>,
-      to: "/store/orders",
+      value: invoices.outstandingCount,
+      sub: (
+        <span className={invoices.overdueCount ? "text-rose" : "text-muted-foreground"}>
+          {moneyShort(invoices.outstanding)}
+          {invoices.overdueCount ? ` · ${invoices.overdueCount} overdue` : ""}
+        </span>
+      ),
+      to: "/invoices",
     },
     {
       label: "New Leads",

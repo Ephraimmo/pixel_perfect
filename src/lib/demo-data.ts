@@ -13,6 +13,32 @@ import { seedLeads, type Lead } from "./leads-data";
 import { seedBookingTypes, type BookingType } from "./booking-data";
 import { seedProjects, type Project } from "./projects-data";
 import { seedQuotes, type Quote } from "./quotes-data";
+import {
+  seedContractTemplates,
+  seedContracts,
+  type Contract,
+  type ContractTemplate,
+} from "./contracts-data";
+import {
+  seedQuestionLibrary,
+  seedQuestionnaireTemplates,
+  seedQuestionnaires,
+  type Question,
+  type Questionnaire,
+  type QuestionnaireTemplate,
+} from "./questionnaires-data";
+import {
+  seedEmailTemplates,
+  seedSentEmails,
+  type EmailTemplate,
+  type SentEmail,
+} from "./emails-data";
+import {
+  seedAutomationRuns,
+  seedAutomations,
+  type Automation,
+  type AutomationRun,
+} from "./automations-data";
 
 /** Unsplash image URL, cropped to the requested size. */
 export function img(id: string, w = 800, h?: number): string {
@@ -242,6 +268,15 @@ export interface DemoState {
   bookingTypes: BookingType[];
   projects: Project[];
   quotes: Quote[];
+  contracts: Contract[];
+  contractTemplates: ContractTemplate[];
+  questionLibrary: Question[];
+  questionnaireTemplates: QuestionnaireTemplate[];
+  questionnaires: Questionnaire[];
+  emailTemplates: EmailTemplate[];
+  sentEmails: SentEmail[];
+  automations: Automation[];
+  automationRuns: AutomationRun[];
 }
 
 // ---------- formatting ----------
@@ -274,7 +309,7 @@ export function formatTime(hhmm: string): string {
 
 // ---------- seed ----------
 
-export const STATE_VERSION = 6;
+export const STATE_VERSION = 7;
 
 /** The demo's "today" — seed sessions and activity sit in the week of Apr 20, 2025. */
 export const DEMO_TODAY = "2025-04-20";
@@ -335,6 +370,16 @@ export function migrateState(saved: unknown): DemoState | null {
       g.clientId || !owner.get(g.id) ? g : { ...g, clientId: owner.get(g.id) },
     );
   }
+  if (s.version < 7 && Array.isArray(merged.invoices)) {
+    // Payment history arrived in v7: backfill seeded payments and add the new seed invoices.
+    const seedById = new Map(seed.invoices.map((i) => [i.id, i]));
+    merged.invoices = [
+      ...merged.invoices.map((i) =>
+        i.payments ? i : { ...i, payments: seedById.get(i.id)?.payments ?? [] },
+      ),
+      ...seed.invoices.filter((x) => !merged.invoices.some((i) => i.id === x.id)),
+    ];
+  }
   return merged;
 }
 
@@ -342,6 +387,8 @@ const W = PHOTOS.wedding;
 const A = PHOTOS.avatars;
 
 export function seedState(): DemoState {
+  const questionLibrary = seedQuestionLibrary();
+  const questionnaireTemplates = seedQuestionnaireTemplates(questionLibrary);
   return {
     version: STATE_VERSION,
     profile: {
@@ -914,6 +961,15 @@ export function seedState(): DemoState {
     leads: seedLeads(),
     projects: seedProjects(),
     quotes: seedQuotes(),
+    contracts: seedContracts(),
+    contractTemplates: seedContractTemplates(),
+    questionLibrary,
+    questionnaireTemplates,
+    questionnaires: seedQuestionnaires(questionnaireTemplates),
+    emailTemplates: seedEmailTemplates(),
+    sentEmails: seedSentEmails(),
+    automations: seedAutomations(),
+    automationRuns: seedAutomationRuns(),
     bookingTypes: seedBookingTypes({
       portrait: PHOTOS.editorPortrait,
       family: PHOTOS.family[1],

@@ -3,15 +3,18 @@
 // state and is honest about it in the UI.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { ClientEventKind, ClientNote } from "./crm-data";
-import { invoiceBalance } from "./invoices";
+import type { ClientEventKind, ClientNote, Invoice, Payment } from "./crm-data";
+import { PAYMENT_METHOD_LABELS, applyPayment, invoiceBalance, invoiceTotal } from "./invoices";
 import type { Lead, LeadStage } from "./leads-data";
 import { matchingClient } from "./leads";
 import { slotLabel } from "./sessions";
 import type { Project, ProjectStatus } from "./projects-data";
 import { PROJECT_STATUS_LABELS } from "./projects";
 import type { Quote, QuoteStatus } from "./quotes-data";
-import { invoiceTotal } from "./invoices";
+import type { Contract, ContractTemplate } from "./contracts-data";
+import type { Answer, Question, Questionnaire, QuestionnaireTemplate } from "./questionnaires-data";
+import type { EmailTemplate, SentEmail } from "./emails-data";
+import type { Automation, AutomationRun } from "./automations-data";
 import {
   DEMO_TODAY,
   PHOTOS,
@@ -116,7 +119,79 @@ const patchProject = (s: DemoState, id: string, fn: (p: Project) => Partial<Proj
   projects: s.projects.map((p) => (p.id === id ? { ...p, ...fn(p) } : p)),
 });
 
+export type NewContractInput = Pick<Contract, "title" | "clientId" | "projectId" | "templateId">;
+export type ContractEdit = Partial<Pick<Contract, "title" | "body" | "projectId">>;
+
+const patchContract = (s: DemoState, id: string, fn: (c: Contract) => Partial<Contract>) => ({
+  ...s,
+  contracts: s.contracts.map((c) => (c.id === id ? { ...c, ...fn(c) } : c)),
+});
+
+/** Update a contract and log the step on its client's activity. */
+function contractStep(
+  s: DemoState,
+  id: string,
+  fn: (c: Contract) => Partial<Contract>,
+  kind: ClientEventKind,
+  title: string,
+): DemoState {
+  const c = s.contracts.find((x) => x.id === id);
+  if (!c) return s;
+  return withEvent(patchContract(s, id, fn), c.clientId, kind, title, c.title);
+}
+
+export type SendQuestionnaireInput = {
+  templateId: string;
+  clientId: string;
+  projectId?: string | undefined;
+  dueDate: string;
+};
+
+/** Replace-or-append by id, keeping list order. */
+function upsert<T extends { id: string }>(list: T[], item: T): T[] {
+  return list.some((x) => x.id === item.id)
+    ? list.map((x) => (x.id === item.id ? item : x))
+    : [...list, item];
+}
+
+const patchQuestionnaire = (
+  s: DemoState,
+  id: string,
+  fn: (q: Questionnaire) => Partial<Questionnaire>,
+) => ({
+  ...s,
+  questionnaires: s.questionnaires.map((q) => (q.id === id ? { ...q, ...fn(q) } : q)),
+});
+
+export type SendEmailInput = {
+  clientId: string;
+  to: string;
+  subject: string;
+  body: string;
+  templateId?: string | undefined;
+  scheduleAt?: string | undefined;
+};
+
 export type BookingRequestInput = NewLeadInput & { requested: NonNullable<Lead["requested"]> };
+
+/** Apply a payment, add it to the client's lifetime spend and log it. */
+function withPayment(s: DemoState, inv: Invoice, payment: Payment): DemoState {
+  const next = applyPayment(inv, payment);
+  const paid = next.amountPaid - inv.amountPaid;
+  return withEvent(
+    {
+      ...s,
+      invoices: s.invoices.map((i) => (i.id === inv.id ? next : i)),
+      clients: s.clients.map((c) =>
+        c.id === inv.clientId ? { ...c, totalSpent: c.totalSpent + paid } : c,
+      ),
+    },
+    inv.clientId,
+    "payment",
+    next.status === "paid" ? `Invoice ${inv.number} paid` : `Payment on ${inv.number}`,
+    `${money(paid)} · ${PAYMENT_METHOD_LABELS[payment.method]}${payment.note ? ` · ${payment.note}` : ""}`,
+  );
+}
 
 /** Fields the studio fills in when logging an inquiry by hand. */
 export type NewLeadInput = Pick<
@@ -174,6 +249,15 @@ export interface DemoStore {
   restoreClientNote: (note: ClientNote) => void;
   linkGallery: (galleryId: string, clientId: string | undefined) => void;
   markInvoicePaid: (id: string) => void;
+  recordPayment: (id: string, payment: Omit<Payment, "id">) => void;
+  saveInvoice: (invoice: Invoice) => void;
+  sendInvoice: (id: string) => void;
+  remindInvoice: (id: string) => void;
+  voidInvoice: (id: string) => void;
+  /** Only while nothing has been paid. */
+  revertInvoiceToDraft: (id: string) => void;
+  deleteInvoice: (id: string) => void;
+  restoreInvoice: (invoice: Invoice) => void;
   addLead: (input: NewLeadInput) => Lead;
   moveLead: (id: string, stage: LeadStage, lostReason?: string) => void;
   /** Turn a lead into a client (or link the existing one); returns the client id. */
@@ -189,6 +273,51 @@ export interface DemoStore {
   setQuoteStatus: (id: string, status: QuoteStatus) => void;
   deleteQuote: (id: string) => void;
   restoreQuote: (quote: Quote) => void;
+  createContract: (input: NewContractInput) => Contract;
+  updateContract: (id: string, patch: ContractEdit) => void;
+  /** Freeze the resolved text, countersign as the studio and send. */
+  sendContract: (id: string, resolvedBody: string) => void;
+  /** Demo stand-ins for what the client does on their side. */
+  markContractViewed: (id: string) => void;
+  signContract: (id: string, name: string) => void;
+  declineContract: (id: string, reason: string) => void;
+  voidContract: (id: string) => void;
+  remindContract: (id: string) => void;
+  /** Back to an editable draft; clears the send and any signatures. */
+  reviseContract: (id: string) => void;
+  deleteContract: (id: string) => void;
+  restoreContract: (contract: Contract) => void;
+  saveContractTemplate: (template: ContractTemplate) => void;
+  deleteContractTemplate: (id: string) => void;
+  restoreContractTemplate: (template: ContractTemplate) => void;
+  saveQuestionnaireTemplate: (template: QuestionnaireTemplate) => void;
+  deleteQuestionnaireTemplate: (id: string) => void;
+  restoreQuestionnaireTemplate: (template: QuestionnaireTemplate) => void;
+  saveLibraryQuestion: (question: Question) => void;
+  deleteLibraryQuestion: (id: string) => void;
+  restoreLibraryQuestion: (question: Question) => void;
+  sendQuestionnaire: (input: SendQuestionnaireInput) => Questionnaire;
+  /** Client side: save without submitting. */
+  saveQuestionnaireAnswers: (id: string, answers: Record<string, Answer>) => void;
+  submitQuestionnaire: (id: string, answers: Record<string, Answer>) => void;
+  remindQuestionnaire: (id: string) => void;
+  /** Let the client edit a submitted questionnaire again. */
+  reopenQuestionnaire: (id: string) => void;
+  deleteQuestionnaire: (id: string) => void;
+  restoreQuestionnaire: (q: Questionnaire) => void;
+  saveEmailTemplate: (template: EmailTemplate) => void;
+  deleteEmailTemplate: (id: string) => void;
+  restoreEmailTemplate: (template: EmailTemplate) => void;
+  /** Send now, or schedule when `scheduleAt` is set. `clientId` "" is a test to yourself. */
+  sendEmail: (input: SendEmailInput) => SentEmail;
+  cancelScheduledEmail: (id: string) => void;
+  saveAutomation: (automation: Automation) => void;
+  setAutomationActive: (id: string, active: boolean) => void;
+  /** Pause or resume several workflows at once (for "Pause all" and its undo). */
+  setAutomationsActive: (ids: string[], active: boolean) => void;
+  deleteAutomation: (id: string) => void;
+  restoreAutomation: (automation: Automation) => void;
+  recordAutomationRun: (run: AutomationRun) => void;
   addProject: (input: NewProjectInput) => Project;
   updateProject: (id: string, patch: ProjectEdit) => void;
   setProjectStatus: (id: string, status: ProjectStatus) => void;
@@ -390,27 +519,81 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       markInvoicePaid: (id) =>
         setState((s) => {
           const inv = s.invoices.find((i) => i.id === id);
-          if (!inv) return s;
-          const due = invoiceBalance(inv);
-          const next: DemoState = {
-            ...s,
-            invoices: s.invoices.map((i) =>
-              i.id === id
-                ? { ...i, status: "paid", amountPaid: i.amountPaid + due, paidDate: DEMO_TODAY }
-                : i,
-            ),
-            clients: s.clients.map((c) =>
-              c.id === inv.clientId ? { ...c, totalSpent: c.totalSpent + due } : c,
-            ),
-          };
+          if (!inv || invoiceBalance(inv) <= 0) return s;
+          return withPayment(s, inv, {
+            id: uid("pay"),
+            amount: invoiceBalance(inv),
+            date: DEMO_TODAY,
+            method: "other",
+            note: "Marked paid in full",
+          });
+        }),
+      recordPayment: (id, payment) =>
+        setState((s) => {
+          const inv = s.invoices.find((i) => i.id === id);
+          if (!inv || invoiceBalance(inv) <= 0) return s;
+          return withPayment(s, inv, { ...payment, id: uid("pay") });
+        }),
+      saveInvoice: (invoice) =>
+        setState((s) => ({
+          ...s,
+          invoices: s.invoices.some((i) => i.id === invoice.id)
+            ? s.invoices.map((i) => (i.id === invoice.id ? invoice : i))
+            : [invoice, ...s.invoices],
+        })),
+      sendInvoice: (id) =>
+        setState((s) => {
+          const inv = s.invoices.find((i) => i.id === id);
+          if (!inv || inv.status !== "draft") return s;
           return withEvent(
-            next,
+            { ...s, invoices: s.invoices.map((i) => (i.id === id ? { ...i, status: "sent" } : i)) },
             inv.clientId,
-            "payment",
-            `Invoice ${inv.number} paid`,
-            `${money(due)} · recorded manually`,
+            "invoice",
+            `Invoice ${inv.number} sent`,
+            `${money(invoiceTotal(inv))} · due ${formatDate(inv.dueDate)}`,
           );
         }),
+      remindInvoice: (id) =>
+        setState((s) => {
+          const inv = s.invoices.find((i) => i.id === id);
+          if (!inv) return s;
+          return withEvent(
+            {
+              ...s,
+              invoices: s.invoices.map((i) => (i.id === id ? { ...i, remindedAt: nowStamp() } : i)),
+            },
+            inv.clientId,
+            "email",
+            "Payment reminder sent",
+            `${inv.number} · ${money(invoiceBalance(inv))} due`,
+          );
+        }),
+      voidInvoice: (id) =>
+        setState((s) => {
+          const inv = s.invoices.find((i) => i.id === id);
+          if (!inv) return s;
+          return withEvent(
+            { ...s, invoices: s.invoices.map((i) => (i.id === id ? { ...i, status: "void" } : i)) },
+            inv.clientId,
+            "invoice",
+            `Invoice ${inv.number} voided`,
+          );
+        }),
+      revertInvoiceToDraft: (id) =>
+        setState((s) => ({
+          ...s,
+          invoices: s.invoices.map((i) =>
+            i.id === id && !(i.payments?.length || i.amountPaid) ? { ...i, status: "draft" } : i,
+          ),
+        })),
+      deleteInvoice: (id) =>
+        setState((s) => ({ ...s, invoices: s.invoices.filter((i) => i.id !== id) })),
+      restoreInvoice: (invoice) =>
+        setState((s) =>
+          s.invoices.some((i) => i.id === invoice.id)
+            ? s
+            : { ...s, invoices: [invoice, ...s.invoices] },
+        ),
       addLead: (input) => {
         const at = nowStamp();
         const lead: Lead = {
@@ -562,6 +745,279 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         setState((s) =>
           s.quotes.some((q) => q.id === quote.id) ? s : { ...s, quotes: [quote, ...s.quotes] },
         ),
+      createContract: (input) => {
+        const template = state.contractTemplates.find((t) => t.id === input.templateId);
+        const contract: Contract = {
+          ...input,
+          id: uid("k"),
+          body: template?.body ?? "",
+          status: "draft",
+          createdAt: DEMO_TODAY,
+        };
+        setState((s) => ({ ...s, contracts: [contract, ...s.contracts] }));
+        return contract;
+      },
+      updateContract: (id, patch) => setState((s) => patchContract(s, id, () => patch)),
+      sendContract: (id, resolvedBody) =>
+        setState((s) =>
+          contractStep(
+            s,
+            id,
+            () => {
+              const at = nowStamp();
+              return {
+                status: "sent",
+                sentBody: resolvedBody,
+                sentAt: at,
+                studioSignature: { name: s.profile.name, signedAt: at },
+              };
+            },
+            "email",
+            "Contract sent for signature",
+          ),
+        ),
+      markContractViewed: (id) =>
+        setState((s) =>
+          contractStep(
+            s,
+            id,
+            () => ({ status: "viewed", viewedAt: nowStamp() }),
+            "contract",
+            "Contract viewed",
+          ),
+        ),
+      signContract: (id, name) =>
+        setState((s) => {
+          const c = s.contracts.find((x) => x.id === id);
+          let next = contractStep(
+            s,
+            id,
+            (x) => {
+              const at = nowStamp();
+              return {
+                status: "signed",
+                viewedAt: x.viewedAt ?? at,
+                clientSignature: { name, signedAt: at },
+              };
+            },
+            "contract",
+            "Contract signed",
+          );
+          // Tick the project's "Contract signed" task, if it has one.
+          if (c?.projectId)
+            next = patchProject(next, c.projectId, (p) => ({
+              tasks: p.tasks.map((t) =>
+                /contract signed/i.test(t.title) ? { ...t, done: true } : t,
+              ),
+            }));
+          return next;
+        }),
+      declineContract: (id, reason) =>
+        setState((s) =>
+          contractStep(
+            s,
+            id,
+            () => ({ status: "declined", declineReason: reason }),
+            "contract",
+            "Contract declined",
+          ),
+        ),
+      voidContract: (id) =>
+        setState((s) =>
+          contractStep(s, id, () => ({ status: "void" }), "contract", "Contract voided"),
+        ),
+      remindContract: (id) =>
+        setState((s) =>
+          contractStep(
+            s,
+            id,
+            () => ({ remindedAt: nowStamp() }),
+            "email",
+            "Signature reminder sent",
+          ),
+        ),
+      reviseContract: (id) =>
+        setState((s) =>
+          patchContract(s, id, () => ({
+            status: "draft",
+            sentBody: undefined,
+            sentAt: undefined,
+            viewedAt: undefined,
+            remindedAt: undefined,
+            studioSignature: undefined,
+            clientSignature: undefined,
+            declineReason: undefined,
+          })),
+        ),
+      deleteContract: (id) =>
+        setState((s) => ({ ...s, contracts: s.contracts.filter((c) => c.id !== id) })),
+      restoreContract: (contract) =>
+        setState((s) =>
+          s.contracts.some((c) => c.id === contract.id)
+            ? s
+            : { ...s, contracts: [contract, ...s.contracts] },
+        ),
+      saveContractTemplate: (template) =>
+        setState((s) => ({
+          ...s,
+          contractTemplates: s.contractTemplates.some((t) => t.id === template.id)
+            ? s.contractTemplates.map((t) => (t.id === template.id ? template : t))
+            : [...s.contractTemplates, template],
+        })),
+      deleteContractTemplate: (id) =>
+        setState((s) => ({
+          ...s,
+          contractTemplates: s.contractTemplates.filter((t) => t.id !== id),
+        })),
+      restoreContractTemplate: (template) =>
+        setState((s) =>
+          s.contractTemplates.some((t) => t.id === template.id)
+            ? s
+            : { ...s, contractTemplates: [...s.contractTemplates, template] },
+        ),
+      saveQuestionnaireTemplate: (t) =>
+        setState((s) => ({ ...s, questionnaireTemplates: upsert(s.questionnaireTemplates, t) })),
+      deleteQuestionnaireTemplate: (id) =>
+        setState((s) => ({
+          ...s,
+          questionnaireTemplates: s.questionnaireTemplates.filter((t) => t.id !== id),
+        })),
+      restoreQuestionnaireTemplate: (t) =>
+        setState((s) => ({ ...s, questionnaireTemplates: upsert(s.questionnaireTemplates, t) })),
+      saveLibraryQuestion: (q) =>
+        setState((s) => ({ ...s, questionLibrary: upsert(s.questionLibrary, q) })),
+      deleteLibraryQuestion: (id) =>
+        setState((s) => ({ ...s, questionLibrary: s.questionLibrary.filter((q) => q.id !== id) })),
+      restoreLibraryQuestion: (q) =>
+        setState((s) => ({ ...s, questionLibrary: upsert(s.questionLibrary, q) })),
+      sendQuestionnaire: ({ templateId, clientId, projectId, dueDate }) => {
+        const t = state.questionnaireTemplates.find((x) => x.id === templateId);
+        const sent: Questionnaire = {
+          id: uid("qn"),
+          title: t?.name ?? "Questionnaire",
+          templateId,
+          clientId,
+          projectId,
+          questions: (t?.questions ?? []).map((q) => ({ ...q, options: [...q.options] })),
+          answers: {},
+          status: "sent",
+          sentAt: nowStamp(),
+          dueDate,
+        };
+        setState((s) =>
+          withEvent(
+            { ...s, questionnaires: [sent, ...s.questionnaires] },
+            clientId,
+            "email",
+            "Questionnaire sent",
+            `${sent.title} · due ${formatDate(dueDate)}`,
+          ),
+        );
+        return sent;
+      },
+      saveQuestionnaireAnswers: (id, answers) =>
+        setState((s) =>
+          patchQuestionnaire(s, id, (q) =>
+            q.status === "submitted"
+              ? {}
+              : { answers, status: "in_progress", lastSavedAt: nowStamp() },
+          ),
+        ),
+      submitQuestionnaire: (id, answers) =>
+        setState((s) => {
+          const q = s.questionnaires.find((x) => x.id === id);
+          if (!q || q.status === "submitted") return s;
+          const at = nowStamp();
+          return withEvent(
+            patchQuestionnaire(s, id, () => ({
+              answers,
+              status: "submitted",
+              submittedAt: at,
+              lastSavedAt: at,
+            })),
+            q.clientId,
+            "update",
+            "Questionnaire submitted",
+            q.title,
+          );
+        }),
+      remindQuestionnaire: (id) =>
+        setState((s) => {
+          const q = s.questionnaires.find((x) => x.id === id);
+          if (!q) return s;
+          return withEvent(
+            patchQuestionnaire(s, id, () => ({ remindedAt: nowStamp() })),
+            q.clientId,
+            "email",
+            "Questionnaire reminder sent",
+            q.title,
+          );
+        }),
+      reopenQuestionnaire: (id) =>
+        setState((s) =>
+          patchQuestionnaire(s, id, () => ({ status: "in_progress", submittedAt: undefined })),
+        ),
+      deleteQuestionnaire: (id) =>
+        setState((s) => ({ ...s, questionnaires: s.questionnaires.filter((q) => q.id !== id) })),
+      restoreQuestionnaire: (q) =>
+        setState((s) =>
+          s.questionnaires.some((x) => x.id === q.id)
+            ? s
+            : { ...s, questionnaires: [q, ...s.questionnaires] },
+        ),
+      saveEmailTemplate: (t) =>
+        setState((s) => ({ ...s, emailTemplates: upsert(s.emailTemplates, t) })),
+      deleteEmailTemplate: (id) =>
+        setState((s) => ({ ...s, emailTemplates: s.emailTemplates.filter((t) => t.id !== id) })),
+      restoreEmailTemplate: (t) =>
+        setState((s) => ({ ...s, emailTemplates: upsert(s.emailTemplates, t) })),
+      sendEmail: ({ scheduleAt, ...input }) => {
+        const email: SentEmail = {
+          ...input,
+          id: uid("em"),
+          status: scheduleAt ? "scheduled" : "sent",
+          at: scheduleAt ?? nowStamp(),
+        };
+        setState((s) => {
+          const next = { ...s, sentEmails: [email, ...s.sentEmails] };
+          if (!input.clientId) return next;
+          return withEvent(
+            next,
+            input.clientId,
+            "email",
+            scheduleAt
+              ? `Email scheduled for ${formatDate(scheduleAt.slice(0, 10))}`
+              : "Email sent",
+            input.subject,
+          );
+        });
+        return email;
+      },
+      cancelScheduledEmail: (id) =>
+        setState((s) => ({
+          ...s,
+          sentEmails: s.sentEmails.filter((e) => !(e.id === id && e.status === "scheduled")),
+        })),
+      saveAutomation: (a) =>
+        setState((s) => ({
+          ...s,
+          automations: upsert(s.automations, { ...a, updatedAt: DEMO_TODAY }),
+        })),
+      setAutomationActive: (id, active) =>
+        setState((s) => ({
+          ...s,
+          automations: s.automations.map((a) => (a.id === id ? { ...a, active } : a)),
+        })),
+      setAutomationsActive: (ids, active) =>
+        setState((s) => ({
+          ...s,
+          automations: s.automations.map((a) => (ids.includes(a.id) ? { ...a, active } : a)),
+        })),
+      deleteAutomation: (id) =>
+        setState((s) => ({ ...s, automations: s.automations.filter((a) => a.id !== id) })),
+      restoreAutomation: (a) => setState((s) => ({ ...s, automations: upsert(s.automations, a) })),
+      recordAutomationRun: (run) =>
+        setState((s) => ({ ...s, automationRuns: [run, ...s.automationRuns] })),
       addProject: ({ tasks, sessionIds, galleryIds, ...input }) => {
         const id = uid("pr");
         const project: Project = {

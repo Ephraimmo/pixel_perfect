@@ -16,7 +16,9 @@ import {
   PenLine,
   Phone,
   Pin,
+  Send,
   PinOff,
+  Plus,
   Star,
   StickyNote,
   Trash2,
@@ -37,6 +39,7 @@ import {
 } from "@/components/kit";
 import { ClientFormDialog } from "@/components/clients";
 import { NewProjectButton, ProjectCard } from "@/components/projects";
+import { ComposeEmailDialog } from "@/components/emails";
 import { AddSessionDialog } from "@/components/studio";
 import {
   DropdownMenu,
@@ -103,6 +106,7 @@ function ClientProfile() {
   const { tab = "activity" } = Route.useSearch();
   const navigate = Route.useNavigate();
   const { state: demo, ready, toggleClientStar, setClientStatus } = useDemo();
+  const [composing, setComposing] = useState(false);
   const client = demo.clients.find((c) => c.id === id);
 
   if (!ready) return <ProfileSkeleton />;
@@ -207,13 +211,17 @@ function ClientProfile() {
               }
               onSaved={() => toast.success("Contact details saved")}
             />
-            <DropdownMenu>
+            {/* Non-modal: an item opens a dialog, and a modal menu would lock the page afterwards. */}
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button size="sm" variant="outline" className="bg-card" aria-label="More actions">
                   <MoreHorizontal />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem onSelect={() => setComposing(true)}>
+                  <Send className="h-4 w-4" /> Send email from template
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => void copyEmail()}>
                   <Copy className="h-4 w-4" /> Copy email
                 </DropdownMenuItem>
@@ -235,6 +243,12 @@ function ClientProfile() {
           </div>
         </div>
       </Panel>
+
+      <ComposeEmailDialog
+        open={composing}
+        onOpenChange={setComposing}
+        defaultClientId={client.id}
+      />
 
       <dl className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Lifetime sessions" value={client.sessions} />
@@ -615,11 +629,19 @@ function GalleriesTab({ clientId }: { clientId: string }) {
 
 function InvoicesTab({ client, invoices }: { client: Client; invoices: Invoice[] }) {
   const { markInvoicePaid } = useDemo();
+  const newInvoice = (
+    <Button asChild size="sm">
+      <Link to="/invoices/new" search={{ client: client.id }}>
+        <Plus /> New invoice
+      </Link>
+    </Button>
+  );
   if (invoices.length === 0) {
     return (
       <EmptyState
         title="No invoices yet"
         description="Invoices you send this client will appear here with their payment status."
+        action={newInvoice}
       />
     );
   }
@@ -628,10 +650,13 @@ function InvoicesTab({ client, invoices }: { client: Client; invoices: Invoice[]
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-muted-foreground">
-        {money(paid)} paid ·{" "}
-        <span className="text-foreground">{money(outstanding)} outstanding</span>
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          {money(paid)} paid ·{" "}
+          <span className="text-foreground">{money(outstanding)} outstanding</span>
+        </p>
+        {newInvoice}
+      </div>
       <ul className="divide-y overflow-hidden rounded-lg border bg-card">
         {invoices.map((inv) => {
           const status = invoiceDisplayStatus(inv, DEMO_TODAY);
@@ -641,7 +666,9 @@ function InvoicesTab({ client, invoices }: { client: Client; invoices: Invoice[]
               <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
-                  {inv.number}
+                  <Link to="/invoices/$id" params={{ id: inv.id }} className="hover:underline">
+                    {inv.number}
+                  </Link>
                   <StatusBadge status={status} label={INVOICE_STATUS_LABELS[status]} />
                 </p>
                 <p className="truncate text-xs text-muted-foreground">

@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Columns3,
   ExternalLink,
+  FileText,
   List,
   Mail,
   MapPin,
@@ -660,6 +661,14 @@ function LeadSheet({
                   </a>
                 </Button>
               ) : null}
+              <Button asChild size="sm" variant="outline" className="bg-card">
+                <Link
+                  to="/quotes/new"
+                  search={lead.clientId ? { client: lead.clientId } : { lead: lead.id }}
+                >
+                  <FileText /> Create quote
+                </Link>
+              </Button>
             </div>
 
             <section className="px-4">

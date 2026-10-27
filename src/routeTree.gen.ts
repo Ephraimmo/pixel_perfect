@@ -27,15 +27,30 @@ import { Route as AppMobileAppsRouteImport } from './routes/_app/mobile-apps'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppTeamRouteImport } from './routes/_app/team'
 import { Route as AppWebsiteRouteImport } from './routes/_app/website'
+import { Route as QIdRouteImport } from './routes/q.$id'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ShopCartRouteImport } from './routes/shop.cart'
 import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
+import { Route as AppAutomationsIndexRouteImport } from './routes/_app/automations.index'
+import { Route as AppAutomationsIdRouteImport } from './routes/_app/automations.$id'
 import { Route as AppClientsIndexRouteImport } from './routes/_app/clients.index'
 import { Route as AppClientsIdRouteImport } from './routes/_app/clients.$id'
+import { Route as AppContractsIndexRouteImport } from './routes/_app/contracts.index'
+import { Route as AppContractsIdRouteImport } from './routes/_app/contracts.$id'
+import { Route as AppEmailsIndexRouteImport } from './routes/_app/emails.index'
+import { Route as AppEmailsIdRouteImport } from './routes/_app/emails.$id'
 import { Route as AppGalleriesIndexRouteImport } from './routes/_app/galleries.index'
+import { Route as AppInvoicesIndexRouteImport } from './routes/_app/invoices.index'
+import { Route as AppInvoicesIdRouteImport } from './routes/_app/invoices.$id'
+import { Route as AppInvoicesNewRouteImport } from './routes/_app/invoices.new'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects.index'
 import { Route as AppProjectsIdRouteImport } from './routes/_app/projects.$id'
+import { Route as AppQuestionnairesIndexRouteImport } from './routes/_app/questionnaires.index'
+import { Route as AppQuestionnairesIdRouteImport } from './routes/_app/questionnaires.$id'
+import { Route as AppQuotesIndexRouteImport } from './routes/_app/quotes.index'
+import { Route as AppQuotesIdRouteImport } from './routes/_app/quotes.$id'
+import { Route as AppQuotesNewRouteImport } from './routes/_app/quotes.new'
 import { Route as AppStoreIndexRouteImport } from './routes/_app/store.index'
 import { Route as AppStoreCouponsRouteImport } from './routes/_app/store.coupons'
 import { Route as AppStoreReportsRouteImport } from './routes/_app/store.reports'
@@ -51,9 +66,11 @@ import { Route as AppWebsiteTemplatesRouteImport } from './routes/_app/website.t
 import { Route as GIdIndexRouteImport } from './routes/g.$id.index'
 import { Route as GIdDownloadsRouteImport } from './routes/g.$id.downloads'
 import { Route as ShopOrderOrderIdRouteImport } from './routes/shop.order.$orderId'
+import { Route as AppContractsTemplatesIdRouteImport } from './routes/_app/contracts.templates.$id'
 import { Route as AppGalleriesIdIndexRouteImport } from './routes/_app/galleries.$id.index'
 import { Route as AppGalleriesIdSettingsRouteImport } from './routes/_app/galleries.$id.settings'
 import { Route as AppGalleriesIdUploadRouteImport } from './routes/_app/galleries.$id.upload'
+import { Route as AppQuestionnairesTemplatesIdRouteImport } from './routes/_app/questionnaires.templates.$id'
 import { Route as AppStoreOrdersIndexRouteImport } from './routes/_app/store.orders.index'
 import { Route as AppStoreOrdersIdRouteImport } from './routes/_app/store.orders.$id'
 import { Route as AppStoreProductsIndexRouteImport } from './routes/_app/store.products.index'
@@ -156,6 +173,11 @@ const AppWebsiteRoute = AppWebsiteRouteImport.update({
   path: '/website',
   getParentRoute: () => AppRoute,
 } as any)
+const QIdRoute = QIdRouteImport.update({
+  id: '/q/$id',
+  path: '/q/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -176,6 +198,16 @@ const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => ShopRoute,
 } as any)
+const AppAutomationsIndexRoute = AppAutomationsIndexRouteImport.update({
+  id: '/automations/',
+  path: '/automations/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomationsIdRoute = AppAutomationsIdRouteImport.update({
+  id: '/automations/$id',
+  path: '/automations/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClientsIndexRoute = AppClientsIndexRouteImport.update({
   id: '/clients/',
   path: '/clients/',
@@ -186,9 +218,44 @@ const AppClientsIdRoute = AppClientsIdRouteImport.update({
   path: '/clients/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContractsIndexRoute = AppContractsIndexRouteImport.update({
+  id: '/contracts/',
+  path: '/contracts/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContractsIdRoute = AppContractsIdRouteImport.update({
+  id: '/contracts/$id',
+  path: '/contracts/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmailsIndexRoute = AppEmailsIndexRouteImport.update({
+  id: '/emails/',
+  path: '/emails/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmailsIdRoute = AppEmailsIdRouteImport.update({
+  id: '/emails/$id',
+  path: '/emails/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGalleriesIndexRoute = AppGalleriesIndexRouteImport.update({
   id: '/galleries/',
   path: '/galleries/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvoicesIndexRoute = AppInvoicesIndexRouteImport.update({
+  id: '/invoices/',
+  path: '/invoices/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvoicesIdRoute = AppInvoicesIdRouteImport.update({
+  id: '/invoices/$id',
+  path: '/invoices/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvoicesNewRoute = AppInvoicesNewRouteImport.update({
+  id: '/invoices/new',
+  path: '/invoices/new',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsIndexRoute = AppProjectsIndexRouteImport.update({
@@ -199,6 +266,31 @@ const AppProjectsIndexRoute = AppProjectsIndexRouteImport.update({
 const AppProjectsIdRoute = AppProjectsIdRouteImport.update({
   id: '/projects/$id',
   path: '/projects/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuestionnairesIndexRoute = AppQuestionnairesIndexRouteImport.update({
+  id: '/questionnaires/',
+  path: '/questionnaires/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuestionnairesIdRoute = AppQuestionnairesIdRouteImport.update({
+  id: '/questionnaires/$id',
+  path: '/questionnaires/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuotesIndexRoute = AppQuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuotesIdRoute = AppQuotesIdRouteImport.update({
+  id: '/quotes/$id',
+  path: '/quotes/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuotesNewRoute = AppQuotesNewRouteImport.update({
+  id: '/quotes/new',
+  path: '/quotes/new',
   getParentRoute: () => AppRoute,
 } as any)
 const AppStoreIndexRoute = AppStoreIndexRouteImport.update({
@@ -276,6 +368,11 @@ const ShopOrderOrderIdRoute = ShopOrderOrderIdRouteImport.update({
   path: '/order/$orderId',
   getParentRoute: () => ShopRoute,
 } as any)
+const AppContractsTemplatesIdRoute = AppContractsTemplatesIdRouteImport.update({
+  id: '/contracts/templates/$id',
+  path: '/contracts/templates/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGalleriesIdIndexRoute = AppGalleriesIdIndexRouteImport.update({
   id: '/galleries/$id/',
   path: '/galleries/$id/',
@@ -291,6 +388,12 @@ const AppGalleriesIdUploadRoute = AppGalleriesIdUploadRouteImport.update({
   path: '/galleries/$id/upload',
   getParentRoute: () => AppRoute,
 } as any)
+const AppQuestionnairesTemplatesIdRoute =
+  AppQuestionnairesTemplatesIdRouteImport.update({
+    id: '/questionnaires/templates/$id',
+    path: '/questionnaires/templates/$id',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppStoreOrdersIndexRoute = AppStoreOrdersIndexRouteImport.update({
   id: '/store/orders/',
   path: '/store/orders/',
@@ -372,12 +475,21 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AppSettingsRoute
   '/team': typeof AppTeamRoute
   '/website': typeof AppWebsiteRouteWithChildren
+  '/q/$id': typeof QIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/': typeof ShopIndexRoute
+  '/automations/$id': typeof AppAutomationsIdRoute
   '/clients/$id': typeof AppClientsIdRoute
+  '/contracts/$id': typeof AppContractsIdRoute
+  '/emails/$id': typeof AppEmailsIdRoute
+  '/invoices/$id': typeof AppInvoicesIdRoute
+  '/invoices/new': typeof AppInvoicesNewRoute
   '/projects/$id': typeof AppProjectsIdRoute
+  '/questionnaires/$id': typeof AppQuestionnairesIdRoute
+  '/quotes/$id': typeof AppQuotesIdRoute
+  '/quotes/new': typeof AppQuotesNewRoute
   '/store/coupons': typeof AppStoreCouponsRoute
   '/store/reports': typeof AppStoreReportsRoute
   '/store/settings': typeof AppStoreSettingsRoute
@@ -389,15 +501,23 @@ export interface FileRoutesByFullPath {
   '/website/templates': typeof AppWebsiteTemplatesRoute
   '/g/$id/downloads': typeof GIdDownloadsRoute
   '/shop/order/$orderId': typeof ShopOrderOrderIdRoute
+  '/automations/': typeof AppAutomationsIndexRoute
   '/clients/': typeof AppClientsIndexRoute
+  '/contracts/': typeof AppContractsIndexRoute
+  '/emails/': typeof AppEmailsIndexRoute
   '/galleries/': typeof AppGalleriesIndexRoute
+  '/invoices/': typeof AppInvoicesIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
+  '/questionnaires/': typeof AppQuestionnairesIndexRoute
+  '/quotes/': typeof AppQuotesIndexRoute
   '/store/': typeof AppStoreIndexRoute
   '/studio/': typeof AppStudioIndexRoute
   '/website/': typeof AppWebsiteIndexRoute
   '/g/$id/': typeof GIdIndexRoute
+  '/contracts/templates/$id': typeof AppContractsTemplatesIdRoute
   '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
   '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/questionnaires/templates/$id': typeof AppQuestionnairesTemplatesIdRoute
   '/store/orders/$id': typeof AppStoreOrdersIdRoute
   '/store/products/new': typeof AppStoreProductsNewRoute
   '/studio/sessions/$id': typeof AppStudioSessionsIdRoute
@@ -428,12 +548,21 @@ export interface FileRoutesByTo {
   '/mobile-apps': typeof AppMobileAppsRoute
   '/settings': typeof AppSettingsRoute
   '/team': typeof AppTeamRoute
+  '/q/$id': typeof QIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop': typeof ShopIndexRoute
+  '/automations/$id': typeof AppAutomationsIdRoute
   '/clients/$id': typeof AppClientsIdRoute
+  '/contracts/$id': typeof AppContractsIdRoute
+  '/emails/$id': typeof AppEmailsIdRoute
+  '/invoices/$id': typeof AppInvoicesIdRoute
+  '/invoices/new': typeof AppInvoicesNewRoute
   '/projects/$id': typeof AppProjectsIdRoute
+  '/questionnaires/$id': typeof AppQuestionnairesIdRoute
+  '/quotes/$id': typeof AppQuotesIdRoute
+  '/quotes/new': typeof AppQuotesNewRoute
   '/store/coupons': typeof AppStoreCouponsRoute
   '/store/reports': typeof AppStoreReportsRoute
   '/store/settings': typeof AppStoreSettingsRoute
@@ -445,15 +574,23 @@ export interface FileRoutesByTo {
   '/website/templates': typeof AppWebsiteTemplatesRoute
   '/g/$id/downloads': typeof GIdDownloadsRoute
   '/shop/order/$orderId': typeof ShopOrderOrderIdRoute
+  '/automations': typeof AppAutomationsIndexRoute
   '/clients': typeof AppClientsIndexRoute
+  '/contracts': typeof AppContractsIndexRoute
+  '/emails': typeof AppEmailsIndexRoute
   '/galleries': typeof AppGalleriesIndexRoute
+  '/invoices': typeof AppInvoicesIndexRoute
   '/projects': typeof AppProjectsIndexRoute
+  '/questionnaires': typeof AppQuestionnairesIndexRoute
+  '/quotes': typeof AppQuotesIndexRoute
   '/store': typeof AppStoreIndexRoute
   '/studio': typeof AppStudioIndexRoute
   '/website': typeof AppWebsiteIndexRoute
   '/g/$id': typeof GIdIndexRoute
+  '/contracts/templates/$id': typeof AppContractsTemplatesIdRoute
   '/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
   '/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/questionnaires/templates/$id': typeof AppQuestionnairesTemplatesIdRoute
   '/store/orders/$id': typeof AppStoreOrdersIdRoute
   '/store/products/new': typeof AppStoreProductsNewRoute
   '/studio/sessions/$id': typeof AppStudioSessionsIdRoute
@@ -488,12 +625,21 @@ export interface FileRoutesById {
   '/_app/settings': typeof AppSettingsRoute
   '/_app/team': typeof AppTeamRoute
   '/_app/website': typeof AppWebsiteRouteWithChildren
+  '/q/$id': typeof QIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/': typeof ShopIndexRoute
+  '/_app/automations/$id': typeof AppAutomationsIdRoute
   '/_app/clients/$id': typeof AppClientsIdRoute
+  '/_app/contracts/$id': typeof AppContractsIdRoute
+  '/_app/emails/$id': typeof AppEmailsIdRoute
+  '/_app/invoices/$id': typeof AppInvoicesIdRoute
+  '/_app/invoices/new': typeof AppInvoicesNewRoute
   '/_app/projects/$id': typeof AppProjectsIdRoute
+  '/_app/questionnaires/$id': typeof AppQuestionnairesIdRoute
+  '/_app/quotes/$id': typeof AppQuotesIdRoute
+  '/_app/quotes/new': typeof AppQuotesNewRoute
   '/_app/store/coupons': typeof AppStoreCouponsRoute
   '/_app/store/reports': typeof AppStoreReportsRoute
   '/_app/store/settings': typeof AppStoreSettingsRoute
@@ -505,15 +651,23 @@ export interface FileRoutesById {
   '/_app/website/templates': typeof AppWebsiteTemplatesRoute
   '/g/$id/downloads': typeof GIdDownloadsRoute
   '/shop/order/$orderId': typeof ShopOrderOrderIdRoute
+  '/_app/automations/': typeof AppAutomationsIndexRoute
   '/_app/clients/': typeof AppClientsIndexRoute
+  '/_app/contracts/': typeof AppContractsIndexRoute
+  '/_app/emails/': typeof AppEmailsIndexRoute
   '/_app/galleries/': typeof AppGalleriesIndexRoute
+  '/_app/invoices/': typeof AppInvoicesIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
+  '/_app/questionnaires/': typeof AppQuestionnairesIndexRoute
+  '/_app/quotes/': typeof AppQuotesIndexRoute
   '/_app/store/': typeof AppStoreIndexRoute
   '/_app/studio/': typeof AppStudioIndexRoute
   '/_app/website/': typeof AppWebsiteIndexRoute
   '/g/$id/': typeof GIdIndexRoute
+  '/_app/contracts/templates/$id': typeof AppContractsTemplatesIdRoute
   '/_app/galleries/$id/settings': typeof AppGalleriesIdSettingsRoute
   '/_app/galleries/$id/upload': typeof AppGalleriesIdUploadRoute
+  '/_app/questionnaires/templates/$id': typeof AppQuestionnairesTemplatesIdRoute
   '/_app/store/orders/$id': typeof AppStoreOrdersIdRoute
   '/_app/store/products/new': typeof AppStoreProductsNewRoute
   '/_app/studio/sessions/$id': typeof AppStudioSessionsIdRoute
@@ -548,12 +702,21 @@ export interface FileRouteTypes {
     | '/settings'
     | '/team'
     | '/website'
+    | '/q/$id'
     | '/shop/$productId'
     | '/shop/cart'
     | '/shop/checkout'
     | '/shop/'
+    | '/automations/$id'
     | '/clients/$id'
+    | '/contracts/$id'
+    | '/emails/$id'
+    | '/invoices/$id'
+    | '/invoices/new'
     | '/projects/$id'
+    | '/questionnaires/$id'
+    | '/quotes/$id'
+    | '/quotes/new'
     | '/store/coupons'
     | '/store/reports'
     | '/store/settings'
@@ -565,15 +728,23 @@ export interface FileRouteTypes {
     | '/website/templates'
     | '/g/$id/downloads'
     | '/shop/order/$orderId'
+    | '/automations/'
     | '/clients/'
+    | '/contracts/'
+    | '/emails/'
     | '/galleries/'
+    | '/invoices/'
     | '/projects/'
+    | '/questionnaires/'
+    | '/quotes/'
     | '/store/'
     | '/studio/'
     | '/website/'
     | '/g/$id/'
+    | '/contracts/templates/$id'
     | '/galleries/$id/settings'
     | '/galleries/$id/upload'
+    | '/questionnaires/templates/$id'
     | '/store/orders/$id'
     | '/store/products/new'
     | '/studio/sessions/$id'
@@ -604,12 +775,21 @@ export interface FileRouteTypes {
     | '/mobile-apps'
     | '/settings'
     | '/team'
+    | '/q/$id'
     | '/shop/$productId'
     | '/shop/cart'
     | '/shop/checkout'
     | '/shop'
+    | '/automations/$id'
     | '/clients/$id'
+    | '/contracts/$id'
+    | '/emails/$id'
+    | '/invoices/$id'
+    | '/invoices/new'
     | '/projects/$id'
+    | '/questionnaires/$id'
+    | '/quotes/$id'
+    | '/quotes/new'
     | '/store/coupons'
     | '/store/reports'
     | '/store/settings'
@@ -621,15 +801,23 @@ export interface FileRouteTypes {
     | '/website/templates'
     | '/g/$id/downloads'
     | '/shop/order/$orderId'
+    | '/automations'
     | '/clients'
+    | '/contracts'
+    | '/emails'
     | '/galleries'
+    | '/invoices'
     | '/projects'
+    | '/questionnaires'
+    | '/quotes'
     | '/store'
     | '/studio'
     | '/website'
     | '/g/$id'
+    | '/contracts/templates/$id'
     | '/galleries/$id/settings'
     | '/galleries/$id/upload'
+    | '/questionnaires/templates/$id'
     | '/store/orders/$id'
     | '/store/products/new'
     | '/studio/sessions/$id'
@@ -663,12 +851,21 @@ export interface FileRouteTypes {
     | '/_app/settings'
     | '/_app/team'
     | '/_app/website'
+    | '/q/$id'
     | '/shop/$productId'
     | '/shop/cart'
     | '/shop/checkout'
     | '/shop/'
+    | '/_app/automations/$id'
     | '/_app/clients/$id'
+    | '/_app/contracts/$id'
+    | '/_app/emails/$id'
+    | '/_app/invoices/$id'
+    | '/_app/invoices/new'
     | '/_app/projects/$id'
+    | '/_app/questionnaires/$id'
+    | '/_app/quotes/$id'
+    | '/_app/quotes/new'
     | '/_app/store/coupons'
     | '/_app/store/reports'
     | '/_app/store/settings'
@@ -680,15 +877,23 @@ export interface FileRouteTypes {
     | '/_app/website/templates'
     | '/g/$id/downloads'
     | '/shop/order/$orderId'
+    | '/_app/automations/'
     | '/_app/clients/'
+    | '/_app/contracts/'
+    | '/_app/emails/'
     | '/_app/galleries/'
+    | '/_app/invoices/'
     | '/_app/projects/'
+    | '/_app/questionnaires/'
+    | '/_app/quotes/'
     | '/_app/store/'
     | '/_app/studio/'
     | '/_app/website/'
     | '/g/$id/'
+    | '/_app/contracts/templates/$id'
     | '/_app/galleries/$id/settings'
     | '/_app/galleries/$id/upload'
+    | '/_app/questionnaires/templates/$id'
     | '/_app/store/orders/$id'
     | '/_app/store/products/new'
     | '/_app/studio/sessions/$id'
@@ -716,6 +921,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TemplatesRoute: typeof TemplatesRoute
   WebsitePreviewRoute: typeof WebsitePreviewRoute
+  QIdRoute: typeof QIdRoute
   GIdDownloadsRoute: typeof GIdDownloadsRoute
   GIdIndexRoute: typeof GIdIndexRoute
 }
@@ -848,6 +1054,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWebsiteRouteImport
       parentRoute: typeof AppRoute
     }
+    '/q/$id': {
+      id: '/q/$id'
+      path: '/q/$id'
+      fullPath: '/q/$id'
+      preLoaderRoute: typeof QIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/': {
       id: '/shop/'
       path: '/'
@@ -876,6 +1089,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopCheckoutRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/_app/automations/': {
+      id: '/_app/automations/'
+      path: '/automations'
+      fullPath: '/automations/'
+      preLoaderRoute: typeof AppAutomationsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/automations/$id': {
+      id: '/_app/automations/$id'
+      path: '/automations/$id'
+      fullPath: '/automations/$id'
+      preLoaderRoute: typeof AppAutomationsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/clients/': {
       id: '/_app/clients/'
       path: '/clients'
@@ -890,11 +1117,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientsIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/contracts/': {
+      id: '/_app/contracts/'
+      path: '/contracts'
+      fullPath: '/contracts/'
+      preLoaderRoute: typeof AppContractsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contracts/$id': {
+      id: '/_app/contracts/$id'
+      path: '/contracts/$id'
+      fullPath: '/contracts/$id'
+      preLoaderRoute: typeof AppContractsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/emails/': {
+      id: '/_app/emails/'
+      path: '/emails'
+      fullPath: '/emails/'
+      preLoaderRoute: typeof AppEmailsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/emails/$id': {
+      id: '/_app/emails/$id'
+      path: '/emails/$id'
+      fullPath: '/emails/$id'
+      preLoaderRoute: typeof AppEmailsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/galleries/': {
       id: '/_app/galleries/'
       path: '/galleries'
       fullPath: '/galleries/'
       preLoaderRoute: typeof AppGalleriesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/invoices/': {
+      id: '/_app/invoices/'
+      path: '/invoices'
+      fullPath: '/invoices/'
+      preLoaderRoute: typeof AppInvoicesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/invoices/$id': {
+      id: '/_app/invoices/$id'
+      path: '/invoices/$id'
+      fullPath: '/invoices/$id'
+      preLoaderRoute: typeof AppInvoicesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/invoices/new': {
+      id: '/_app/invoices/new'
+      path: '/invoices/new'
+      fullPath: '/invoices/new'
+      preLoaderRoute: typeof AppInvoicesNewRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projects/': {
@@ -909,6 +1185,41 @@ declare module '@tanstack/react-router' {
       path: '/projects/$id'
       fullPath: '/projects/$id'
       preLoaderRoute: typeof AppProjectsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/questionnaires/': {
+      id: '/_app/questionnaires/'
+      path: '/questionnaires'
+      fullPath: '/questionnaires/'
+      preLoaderRoute: typeof AppQuestionnairesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/questionnaires/$id': {
+      id: '/_app/questionnaires/$id'
+      path: '/questionnaires/$id'
+      fullPath: '/questionnaires/$id'
+      preLoaderRoute: typeof AppQuestionnairesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quotes/': {
+      id: '/_app/quotes/'
+      path: '/quotes'
+      fullPath: '/quotes/'
+      preLoaderRoute: typeof AppQuotesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quotes/$id': {
+      id: '/_app/quotes/$id'
+      path: '/quotes/$id'
+      fullPath: '/quotes/$id'
+      preLoaderRoute: typeof AppQuotesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quotes/new': {
+      id: '/_app/quotes/new'
+      path: '/quotes/new'
+      fullPath: '/quotes/new'
+      preLoaderRoute: typeof AppQuotesNewRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/store/': {
@@ -1016,6 +1327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopOrderOrderIdRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/_app/contracts/templates/$id': {
+      id: '/_app/contracts/templates/$id'
+      path: '/contracts/templates/$id'
+      fullPath: '/contracts/templates/$id'
+      preLoaderRoute: typeof AppContractsTemplatesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/galleries/$id/': {
       id: '/_app/galleries/$id/'
       path: '/galleries/$id'
@@ -1035,6 +1353,13 @@ declare module '@tanstack/react-router' {
       path: '/galleries/$id/upload'
       fullPath: '/galleries/$id/upload'
       preLoaderRoute: typeof AppGalleriesIdUploadRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/questionnaires/templates/$id': {
+      id: '/_app/questionnaires/templates/$id'
+      path: '/questionnaires/templates/$id'
+      fullPath: '/questionnaires/templates/$id'
+      preLoaderRoute: typeof AppQuestionnairesTemplatesIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/store/orders/': {
@@ -1164,19 +1489,35 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppTeamRoute: typeof AppTeamRoute
   AppWebsiteRoute: typeof AppWebsiteRouteWithChildren
+  AppAutomationsIdRoute: typeof AppAutomationsIdRoute
   AppClientsIdRoute: typeof AppClientsIdRoute
+  AppContractsIdRoute: typeof AppContractsIdRoute
+  AppEmailsIdRoute: typeof AppEmailsIdRoute
+  AppInvoicesIdRoute: typeof AppInvoicesIdRoute
+  AppInvoicesNewRoute: typeof AppInvoicesNewRoute
   AppProjectsIdRoute: typeof AppProjectsIdRoute
+  AppQuestionnairesIdRoute: typeof AppQuestionnairesIdRoute
+  AppQuotesIdRoute: typeof AppQuotesIdRoute
+  AppQuotesNewRoute: typeof AppQuotesNewRoute
   AppStoreCouponsRoute: typeof AppStoreCouponsRoute
   AppStoreReportsRoute: typeof AppStoreReportsRoute
   AppStoreSettingsRoute: typeof AppStoreSettingsRoute
   AppStudioCalendarRoute: typeof AppStudioCalendarRoute
+  AppAutomationsIndexRoute: typeof AppAutomationsIndexRoute
   AppClientsIndexRoute: typeof AppClientsIndexRoute
+  AppContractsIndexRoute: typeof AppContractsIndexRoute
+  AppEmailsIndexRoute: typeof AppEmailsIndexRoute
   AppGalleriesIndexRoute: typeof AppGalleriesIndexRoute
+  AppInvoicesIndexRoute: typeof AppInvoicesIndexRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
+  AppQuestionnairesIndexRoute: typeof AppQuestionnairesIndexRoute
+  AppQuotesIndexRoute: typeof AppQuotesIndexRoute
   AppStoreIndexRoute: typeof AppStoreIndexRoute
   AppStudioIndexRoute: typeof AppStudioIndexRoute
+  AppContractsTemplatesIdRoute: typeof AppContractsTemplatesIdRoute
   AppGalleriesIdSettingsRoute: typeof AppGalleriesIdSettingsRoute
   AppGalleriesIdUploadRoute: typeof AppGalleriesIdUploadRoute
+  AppQuestionnairesTemplatesIdRoute: typeof AppQuestionnairesTemplatesIdRoute
   AppStoreOrdersIdRoute: typeof AppStoreOrdersIdRoute
   AppStoreProductsNewRoute: typeof AppStoreProductsNewRoute
   AppStudioSessionsIdRoute: typeof AppStudioSessionsIdRoute
@@ -1195,19 +1536,35 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppTeamRoute: AppTeamRoute,
   AppWebsiteRoute: AppWebsiteRouteWithChildren,
+  AppAutomationsIdRoute: AppAutomationsIdRoute,
   AppClientsIdRoute: AppClientsIdRoute,
+  AppContractsIdRoute: AppContractsIdRoute,
+  AppEmailsIdRoute: AppEmailsIdRoute,
+  AppInvoicesIdRoute: AppInvoicesIdRoute,
+  AppInvoicesNewRoute: AppInvoicesNewRoute,
   AppProjectsIdRoute: AppProjectsIdRoute,
+  AppQuestionnairesIdRoute: AppQuestionnairesIdRoute,
+  AppQuotesIdRoute: AppQuotesIdRoute,
+  AppQuotesNewRoute: AppQuotesNewRoute,
   AppStoreCouponsRoute: AppStoreCouponsRoute,
   AppStoreReportsRoute: AppStoreReportsRoute,
   AppStoreSettingsRoute: AppStoreSettingsRoute,
   AppStudioCalendarRoute: AppStudioCalendarRoute,
+  AppAutomationsIndexRoute: AppAutomationsIndexRoute,
   AppClientsIndexRoute: AppClientsIndexRoute,
+  AppContractsIndexRoute: AppContractsIndexRoute,
+  AppEmailsIndexRoute: AppEmailsIndexRoute,
   AppGalleriesIndexRoute: AppGalleriesIndexRoute,
+  AppInvoicesIndexRoute: AppInvoicesIndexRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
+  AppQuestionnairesIndexRoute: AppQuestionnairesIndexRoute,
+  AppQuotesIndexRoute: AppQuotesIndexRoute,
   AppStoreIndexRoute: AppStoreIndexRoute,
   AppStudioIndexRoute: AppStudioIndexRoute,
+  AppContractsTemplatesIdRoute: AppContractsTemplatesIdRoute,
   AppGalleriesIdSettingsRoute: AppGalleriesIdSettingsRoute,
   AppGalleriesIdUploadRoute: AppGalleriesIdUploadRoute,
+  AppQuestionnairesTemplatesIdRoute: AppQuestionnairesTemplatesIdRoute,
   AppStoreOrdersIdRoute: AppStoreOrdersIdRoute,
   AppStoreProductsNewRoute: AppStoreProductsNewRoute,
   AppStudioSessionsIdRoute: AppStudioSessionsIdRoute,
@@ -1250,6 +1607,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TemplatesRoute: TemplatesRoute,
   WebsitePreviewRoute: WebsitePreviewRoute,
+  QIdRoute: QIdRoute,
   GIdDownloadsRoute: GIdDownloadsRoute,
   GIdIndexRoute: GIdIndexRoute,
 }

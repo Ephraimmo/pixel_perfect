@@ -42,10 +42,24 @@ export interface Invoice {
   /** Percent, applied after the discount. */
   taxRate: number;
   discount: { kind: "percent" | "amount"; value: number };
+  /** Sum of `payments`; kept for quick reads and older saved data. */
   amountPaid: number;
   status: InvoiceStatus;
   paidDate?: string | undefined;
   notes: string;
+  payments?: Payment[] | undefined;
+  /** When the last payment reminder went out. */
+  remindedAt?: string | undefined;
+}
+
+export type PaymentMethod = "card" | "eft" | "cash" | "other";
+
+export interface Payment {
+  id: string;
+  amount: number;
+  date: string; // ISO date
+  method: PaymentMethod;
+  note: string;
 }
 
 export function seedClientNotes(): ClientNote[] {
@@ -249,6 +263,7 @@ export function seedInvoices(): Invoice[] {
   return [
     {
       id: "inv-1036",
+      payments: [{ id: "inv-1036-p1", amount: 575, date: "2025-01-20", method: "eft", note: "" }],
       number: "INV-1036",
       clientId: "c3",
       issueDate: "2025-01-10",
@@ -266,6 +281,7 @@ export function seedInvoices(): Invoice[] {
     },
     {
       id: "inv-1039",
+      payments: [{ id: "inv-1039-p1", amount: 1725, date: "2025-02-10", method: "eft", note: "" }],
       projectId: "pr6",
       number: "INV-1039",
       clientId: "c9",
@@ -284,6 +300,7 @@ export function seedInvoices(): Invoice[] {
     },
     {
       id: "inv-1040",
+      payments: [{ id: "inv-1040-p1", amount: 1200, date: "2024-10-03", method: "card", note: "" }],
       projectId: "pr1",
       number: "INV-1040",
       clientId: "c1",
@@ -306,6 +323,7 @@ export function seedInvoices(): Invoice[] {
     },
     {
       id: "inv-1042",
+      payments: [{ id: "inv-1042-p1", amount: 1200, date: "2025-04-18", method: "card", note: "" }],
       projectId: "pr1",
       number: "INV-1042",
       clientId: "c1",
@@ -378,6 +396,7 @@ export function seedInvoices(): Invoice[] {
     },
     {
       id: "inv-1046",
+      payments: [{ id: "inv-1046-p1", amount: 1500, date: "2025-03-08", method: "card", note: "" }],
       projectId: "pr5",
       number: "INV-1046",
       clientId: "c10",
@@ -414,6 +433,68 @@ export function seedInvoices(): Invoice[] {
       amountPaid: 0,
       status: "draft",
       notes: "",
+    },
+    {
+      id: "inv-1041",
+      number: "INV-1041",
+      clientId: "c7",
+      projectId: "pr9",
+      issueDate: "2024-11-25",
+      dueDate: "2024-12-09",
+      items: [
+        {
+          id: "li1",
+          description: "Architectural photography — exterior & interior (days)",
+          quantity: 2,
+          unitPrice: 1500,
+        },
+        { id: "li2", description: "Twilight exterior session", quantity: 1, unitPrice: 600 },
+      ],
+      taxRate: 0,
+      discount: { kind: "amount", value: 0 },
+      amountPaid: 3600,
+      status: "paid",
+      paidDate: "2024-12-02",
+      notes: "",
+      payments: [{ id: "inv-1041-p1", amount: 3600, date: "2024-12-02", method: "eft", note: "" }],
+    },
+    {
+      id: "inv-1037",
+      number: "INV-1037",
+      clientId: "c8",
+      issueDate: "2025-01-14",
+      dueDate: "2025-01-28",
+      items: [{ id: "li1", description: "Personal branding session", quantity: 1, unitPrice: 500 }],
+      taxRate: 0,
+      discount: { kind: "amount", value: 0 },
+      amountPaid: 0,
+      status: "void",
+      notes: "Issued in error — duplicate of the November quote.",
+    },
+    {
+      id: "inv-1048",
+      number: "INV-1048",
+      clientId: "c9",
+      projectId: "pr6",
+      issueDate: "2025-04-16",
+      dueDate: "2025-05-07",
+      items: [
+        {
+          id: "li1",
+          description: "Corporate awards evening coverage (hours)",
+          quantity: 3,
+          unitPrice: 220,
+        },
+        { id: "li2", description: "Same-day highlights", quantity: 1, unitPrice: 180 },
+      ],
+      taxRate: 15,
+      discount: { kind: "amount", value: 0 },
+      amountPaid: 300,
+      status: "partial",
+      notes: "Deposit received — balance due after the event.",
+      payments: [
+        { id: "inv-1048-p1", amount: 300, date: "2025-04-17", method: "eft", note: "Deposit" },
+      ],
     },
   ];
 }
