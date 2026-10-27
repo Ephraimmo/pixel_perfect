@@ -12,7 +12,10 @@ const links = [
   { to: "/templates", label: "Templates", exact: false },
 ] as const;
 
-/** Main site navigation: a frosted-glass bar that stays on top while scrolling. */
+/**
+ * Main site navigation: a frosted-glass bar that stays at the top. The current
+ * page is underlined; hovering a link previews the underline in a lighter tone.
+ */
 export function MarketingNav({ className }: { className?: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [scrolled, setScrolled] = useState(false);
@@ -35,28 +38,32 @@ export function MarketingNav({ className }: { className?: string }) {
   }, [open]);
 
   return (
-    <header className={cn("sticky top-0 z-40 px-3 pt-3 sm:px-4", className)}>
-      <div
-        className={cn(
-          "mx-auto flex h-14 max-w-6xl items-center gap-4 rounded-2xl border px-3 transition-[background-color,box-shadow] duration-300 sm:px-4",
-          "border-white/60 bg-background/55 shadow-[0_8px_30px_-14px_rgba(40,28,16,0.25)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10",
-          scrolled && "bg-background/80 shadow-lift",
-        )}
-      >
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b backdrop-blur-xl backdrop-saturate-150 transition-[background-color,box-shadow,border-color] duration-300",
+        scrolled || open
+          ? "border-border bg-background/85 shadow-soft"
+          : "border-white/50 bg-background/60 dark:border-white/10",
+        className,
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
         <Logo className="text-lg" />
 
-        <nav aria-label="Main" className="mx-auto hidden md:block">
-          <ul className="flex items-center gap-1 rounded-full border border-white/70 bg-white/40 p-1 shadow-inner shadow-black/[0.03] backdrop-blur-md dark:border-white/10 dark:bg-white/5">
+        <nav aria-label="Main" className="mx-auto hidden h-full md:block">
+          <ul className="flex h-full items-center gap-8">
             {links.map((l) => (
-              <li key={l.to}>
+              <li key={l.to} className="h-full">
                 <Link
                   to={l.to}
                   activeOptions={{ exact: l.exact }}
-                  className="block rounded-full px-4 py-1.5 text-[13px] text-foreground/70 transition-colors hover:bg-white/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
-                  activeProps={{
-                    className:
-                      "bg-card !text-foreground font-medium shadow-sm ring-1 ring-black/5 hover:bg-card",
-                  }}
+                  className={cn(
+                    "relative flex h-full items-center text-[13px] text-foreground/65 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none",
+                    // Underline sits on the header's bottom edge.
+                    "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-foreground/35 after:transition-transform after:duration-200",
+                    "hover:after:scale-x-100 focus-visible:after:scale-x-100",
+                    "data-[status=active]:font-medium data-[status=active]:text-foreground data-[status=active]:after:scale-x-100 data-[status=active]:after:bg-foreground",
+                  )}
                 >
                   {l.label}
                 </Link>
@@ -66,12 +73,7 @@ export function MarketingNav({ className }: { className?: string }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="hidden border-white/70 bg-white/50 backdrop-blur-md hover:bg-white/80 sm:inline-flex dark:border-white/10 dark:bg-white/5"
-          >
+          <Button asChild variant="outline" size="sm" className="hidden bg-card/60 sm:inline-flex">
             <Link to="/login">Log in</Link>
           </Button>
           <Button asChild size="sm">
@@ -96,32 +98,22 @@ export function MarketingNav({ className }: { className?: string }) {
         <nav
           id="marketing-mobile-menu"
           aria-label="Main"
-          className="mx-auto mt-2 max-w-6xl rounded-2xl border border-white/60 bg-background/85 p-2 shadow-lift backdrop-blur-xl animate-in fade-in slide-in-from-top-2 md:hidden dark:border-white/10"
+          className="border-t animate-in fade-in slide-in-from-top-1 md:hidden"
         >
-          <ul className="space-y-0.5">
+          <ul className="mx-auto max-w-6xl py-2">
             {links.map((l) => (
               <li key={l.to}>
                 <Link
                   to={l.to}
                   activeOptions={{ exact: l.exact }}
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-foreground/75 transition-colors hover:bg-white/60 hover:text-foreground dark:hover:bg-white/10"
-                  activeProps={{
-                    className: "bg-card !text-foreground font-medium shadow-sm ring-1 ring-black/5",
-                  }}
+                  className="block border-l-2 border-transparent px-4 py-3 text-sm text-foreground/70 transition-colors hover:border-foreground/30 hover:bg-foreground/[0.03] hover:text-foreground data-[status=active]:border-foreground data-[status=active]:font-medium data-[status=active]:text-foreground sm:px-6"
                 >
-                  {({ isActive }) => (
-                    <>
-                      {l.label}
-                      {isActive ? (
-                        <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
-                      ) : null}
-                    </>
-                  )}
+                  {l.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="mt-2 border-t pt-2 sm:hidden">
+          <div className="border-t px-4 py-3 sm:hidden">
             <Button asChild variant="outline" size="sm" className="w-full">
               <Link to="/login">Log in</Link>
             </Button>
